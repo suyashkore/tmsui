@@ -26,8 +26,9 @@ const placeholderPersistedReducer = persistReducer(
 // ==============================|| ROOT REDUCER ||============================== //
 
 const rootReducer = combineReducers({
-    placeholder: placeholderPersistedReducer, // Placeholder persisted reducer
-    snackbar: snackbarReducer
+    snackbar: snackbarReducer,
+    placeholder: placeholderPersistedReducer // Placeholder persisted reducer
+    
 });
 
 export default rootReducer;
