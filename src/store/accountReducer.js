@@ -1,5 +1,5 @@
 // action - state management
-import { LOGIN, LOGOUT, REGISTER } from './actions';
+import { LOGIN, LOGOUT } from './actions';
 
 // ==============================|| ACCOUNT REDUCER ||============================== //
 
@@ -11,13 +11,6 @@ const initialState = {
 
 const accountReducer = (state = initialState, action) => {
     switch (action.type) {
-        case REGISTER: {
-            const { user } = action.payload;
-            return {
-                ...state,
-                user
-            };
-        }
         case LOGIN: {
             const { user } = action.payload;
             return {
