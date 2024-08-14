@@ -5,20 +5,29 @@ import storage from 'redux-persist/lib/storage';
 
 // project imports
 import snackbarReducer from './slices/snackbar';
-import cartReducer from './slices/cart';
 
-// ==============================|| COMBINE REDUCER ||============================== //
+// ==============================|| PLACEHOLDER PERSISTED REDUCER ||============================== //
 
-const reducer = combineReducers({
-    snackbar: snackbarReducer,
-    cart: persistReducer(
-        {
-            key: 'cart',
-            storage,
-            keyPrefix: 'tmsui-'
-        },
-        cartReducer
-    )
+/**
+ * A placeholder reducer that serves as a no-op persisted state.
+ * This reducer is intentionally kept to maintain the structure of persisted reducers
+ * in the application, even when no actual persistence is required.
+ * It's primarily used to satisfy configurations that expect a persisted reducer to be present.
+ */
+const placeholderPersistedReducer = persistReducer(
+    {
+        key: 'placeholder',
+        storage,
+        keyPrefix: 'tmsui-'
+    },
+    (state = {}) => state // No-op reducer function
+);
+
+// ==============================|| ROOT REDUCER ||============================== //
+
+const rootReducer = combineReducers({
+    placeholder: placeholderPersistedReducer, // Placeholder persisted reducer
+    snackbar: snackbarReducer
 });
 
-export default reducer;
+export default rootReducer;
