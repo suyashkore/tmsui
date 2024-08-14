@@ -2,11 +2,10 @@
 import { FormattedMessage } from 'react-intl';
 
 // assets
-import { IconDashboard, IconDeviceAnalytics } from '@tabler/icons-react';
+import { IconDashboard } from '@tabler/icons-react';
 
 const icons = {
-    IconDashboard: IconDashboard,
-    IconDeviceAnalytics: IconDeviceAnalytics
+    IconDashboard: IconDashboard
 };
 
 // ==============================|| MENU ITEMS - DASHBOARD ||============================== //
@@ -23,14 +22,6 @@ const dashboard = {
             type: 'item',
             url: '/dashboard/default',
             icon: icons.IconDashboard,
-            breadcrumbs: false
-        },
-        {
-            id: 'analytics',
-            title: <FormattedMessage id="analytics" />,
-            type: 'item',
-            url: '/dashboard/analytics',
-            icon: icons.IconDeviceAnalytics,
             breadcrumbs: false
         }
     ]
