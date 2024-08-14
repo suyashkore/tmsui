@@ -1,30 +1,27 @@
 import { Link } from 'react-router-dom';
 
 // material-ui
-import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 // project imports
-import AuthWrapper1 from '../AuthWrapper1';
+import AuthWrapper from '../AuthWrapper';
 import AuthCardWrapper from '../AuthCardWrapper';
 import AuthLogin from '../auth-forms/AuthLogin';
 import { Logo64 } from 'ui-component/Logo';
 import AuthFooter from 'ui-component/cards/AuthFooter';
-import useAuth from 'hooks/useAuth';
 
 // assets
 
-// ================================|| AUTH3 - LOGIN ||================================ //
+// ================================|| AUTH - LOGIN ||================================ //
 
 const Login = () => {
-    const { isLoggedIn } = useAuth();
     const downMD = useMediaQuery((theme) => theme.breakpoints.down('md'));
 
     return (
-        <AuthWrapper1>
+        <AuthWrapper>
             <Grid container direction="column" justifyContent="flex-end" sx={{ minHeight: '100vh' }}>
                 <Grid item xs={12}>
                     <Grid container justifyContent="center" alignItems="center" sx={{ minHeight: 'calc(100vh - 68px)' }}>
@@ -46,7 +43,7 @@ const Login = () => {
                                             <Grid item>
                                                 <Stack alignItems="center" justifyContent="center" spacing={1}>
                                                     <Typography color="secondary.main" gutterBottom variant={downMD ? 'h3' : 'h2'}>
-                                                        Hi, Welcome Back
+                                                        Hi, Welcome to TMS
                                                     </Typography>
                                                     <Typography
                                                         variant="caption"
@@ -62,21 +59,6 @@ const Login = () => {
                                     <Grid item xs={12}>
                                         <AuthLogin />
                                     </Grid>
-                                    <Grid item xs={12}>
-                                        <Divider />
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <Grid item container direction="column" alignItems="center" xs={12}>
-                                            <Typography
-                                                component={Link}
-                                                to={isLoggedIn ? '/pages/register/register3' : '/register'}
-                                                variant="subtitle1"
-                                                sx={{ textDecoration: 'none' }}
-                                            >
-                                                Don&apos;t have an account?
-                                            </Typography>
-                                        </Grid>
-                                    </Grid>
                                 </Grid>
                             </AuthCardWrapper>
                         </Grid>
@@ -86,7 +68,7 @@ const Login = () => {
                     <AuthFooter />
                 </Grid>
             </Grid>
-        </AuthWrapper1>
+        </AuthWrapper>
     );
 };
 
