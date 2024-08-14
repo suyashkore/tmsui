@@ -26,7 +26,7 @@ const initialState = {
 const ConfigContext = createContext(initialState);
 
 function ConfigProvider({ children }) {
-    const [config, setConfig] = useLocalStorage('berry-config-vite-js', {
+    const [config, setConfig] = useLocalStorage('tmsui-config-vite-js', {
         menuOrientation: initialState.menuOrientation,
         miniDrawer: initialState.miniDrawer,
         fontFamily: initialState.fontFamily,

@@ -17,10 +17,10 @@ const dashboard = {
     type: 'group',
     children: [
         {
-            id: 'default',
-            title: <FormattedMessage id="default" />,
+            id: 'exec-summary',
+            title: <FormattedMessage id="exec-summary" />,
             type: 'item',
-            url: '/dashboard/default',
+            url: '/dashboard/execsummary',
             icon: icons.IconDashboard,
             breadcrumbs: false
         }
