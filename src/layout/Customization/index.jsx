@@ -20,14 +20,8 @@ import Typography from '@mui/material/Typography';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 
 // project imports
-import FontFamily from './FontFamily';
-import BoxContainer from './BoxContainer';
 import PresetColor from './PresetColor';
-import Layout from './Layout';
-import InputFilled from './InputFilled';
-import BorderRadius from './BorderRadius';
 import ThemeModeLayout from './ThemeMode';
-import SidebarDrawer from './SidebarDrawer';
 import MenuOrientation from './MenuOrientation';
 
 import MainCard from 'ui-component/cards/MainCard';
@@ -35,7 +29,7 @@ import AnimateButton from 'ui-component/extended/AnimateButton';
 import useConfig from 'hooks/useConfig';
 
 // assets
-import { IconSettings, IconPlus, IconTextSize, IconColorSwatch } from '@tabler/icons-react';
+import { IconSettings, IconPlus, IconChevronsUpLeft, IconColorSwatch } from '@tabler/icons-react';
 import { ThemeMode } from 'config';
 
 // ==============================|| LIVE CUSTOMIZATION ||============================== //
@@ -143,7 +137,7 @@ const Customization = () => {
                                     aria-label="basic tabs example"
                                 >
                                     <Tab label={<IconColorSwatch />} {...a11yProps(0)} sx={{ width: '50%' }} />
-                                    <Tab label={<IconTextSize />} {...a11yProps(1)} sx={{ width: '50%' }} />
+                                    <Tab label={<IconChevronsUpLeft />} {...a11yProps(1)} sx={{ width: '50%' }} />
                                 </Tabs>
                             </Box>
                             <CustomTabPanel value={value} index={0}>
@@ -158,43 +152,13 @@ const Customization = () => {
                                         <PresetColor />
                                         <Divider />
                                     </Grid>
-                                    <Grid item xs={12}>
-                                        {/* Input Background */}
-                                        <InputFilled />
-                                        <Divider />
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        {/* Theme Width */}
-                                        <BoxContainer />
-                                        <Divider />
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        {/* Theme Layout */}
-                                        <Layout />
-                                        <Divider />
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        {/* Sidebar Drawer */}
-                                        <SidebarDrawer />
-                                        <Divider />
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        {/* Menu Orientation */}
-                                        <MenuOrientation />
-                                        <Divider />
-                                    </Grid>
                                 </Grid>
                             </CustomTabPanel>
                             <CustomTabPanel value={value} index={1}>
                                 <Grid container spacing={2}>
                                     <Grid item xs={12}>
-                                        {/* font family */}
-                                        <FontFamily />
-                                        <Divider />
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        {/* border radius */}
-                                        <BorderRadius />
+                                        {/* Menu Orientation */}
+                                        <MenuOrientation />
                                         <Divider />
                                     </Grid>
                                 </Grid>
