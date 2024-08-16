@@ -4,11 +4,11 @@
 
 import axios from 'axios';
 
-const axiosServices = axios.create({ baseURL: import.meta.env.VITE_APP_API_URL || 'http://localhost:3010/' });
+const backendApiCall = axios.create({ baseURL: import.meta.env.VITE_BACKEND_API_URL || 'http://localhost:8000/tapi/v1/' });
 
 // ==============================|| AXIOS - FOR MOCK SERVICES ||============================== //
 
-axiosServices.interceptors.request.use(
+backendApiCall.interceptors.request.use(
     async (config) => {
         const jwToken = localStorage.getItem('jwToken');
         if (jwToken) {
@@ -21,7 +21,7 @@ axiosServices.interceptors.request.use(
     }
 );
 
-axiosServices.interceptors.response.use(
+backendApiCall.interceptors.response.use(
     (response) => response,
     (error) => {
         if (error.response && error.response.status === 401 && !window.location.href.includes('/')) {
@@ -31,12 +31,12 @@ axiosServices.interceptors.response.use(
     }
 );
 
-export default axiosServices;
+export default backendApiCall;
 
 export const fetcher = async (args) => {
     const [url, config] = Array.isArray(args) ? args : [args];
 
-    const res = await axiosServices.get(url, { ...config });
+    const res = await backendApiCall.get(url, { ...config });
 
     return res.data;
 };

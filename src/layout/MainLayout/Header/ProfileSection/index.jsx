@@ -24,7 +24,7 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 import MainCard from 'ui-component/cards/MainCard';
 import Transitions from 'ui-component/extended/Transitions';
 import useAuth from 'hooks/useAuth';
-import User1 from 'assets/images/users/user-round.svg';
+import UserPic from 'assets/images/users/user-round.svg';
 import { ThemeMode } from 'config';
 
 // assets
@@ -107,7 +107,7 @@ const ProfileSection = () => {
                 }}
                 icon={
                     <Avatar
-                        src={User1}
+                        src={UserPic}
                         alt="user-images"
                         sx={{
                             ...theme.typography.mediumAvatar,

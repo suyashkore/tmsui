@@ -11,7 +11,7 @@ import accountReducer from 'store/accountReducer';
 
 // project imports
 import Loader from 'ui-component/Loader';
-import axiosServices from 'utils/axios';  // Import the centralized Axios instance
+import backendApiCall from 'utils/backendApiCall';  // Import the centralized Axios instance
 
 const chance = new Chance();
 
@@ -33,10 +33,10 @@ const verifyToken = (jwToken) => {
 const setSession = (jwToken) => {
     if (jwToken) {
         localStorage.setItem('jwToken', jwToken);
-        axiosServices.defaults.headers.common.Authorization = `Bearer ${jwToken}`;
+        backendApiCall.defaults.headers.common.Authorization = `Bearer ${jwToken}`;
     } else {
         localStorage.removeItem('jwToken');
-        delete axiosServices.defaults.headers.common.Authorization;
+        delete backendApiCall.defaults.headers.common.Authorization;
     }
 };
 
@@ -101,7 +101,7 @@ export const JWTProvider = ({ children }) => {
         tenant_id = tenant_id === '' ? null : tenant_id;
 
         // Now using the centralized axios instance without the full URL
-        const response = await axiosServices.post('/tapi/v1/userauth/withloginid', {
+        const response = await backendApiCall.post('/userauth/withloginid', {
             tenant_id,
             login_id,
             password

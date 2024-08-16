@@ -6,7 +6,7 @@ import LoginRoutes from './LoginRoutes';
 
 // ==============================|| ROUTING RENDER ||============================== //
 const router = createBrowserRouter([LoginRoutes, MainRoutes], {
-    basename: import.meta.env.VITE_APP_BASE_NAME
+    basename: import.meta.env.VITE_UI_APP_CONTEXT_ROOT_URL
 });
 
 export default router;
