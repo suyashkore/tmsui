@@ -30,7 +30,7 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
     const theme = useTheme();
 
     const [timeValue, setTimeValue] = React.useState(false);
-    const handleChangeTime = () => {
+    const handleChangeTime = (newValue) => {
         setTimeValue(newValue);
     };
 
@@ -104,7 +104,7 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
                                             variant={timeValue ? 'contained' : 'text'}
                                             size="small"
                                             sx={{ color: 'inherit' }}
-                                            onClick={(e) => handleChangeTime(e, true)}
+                                            onClick={() => handleChangeTime(true)}
                                         >
                                             Month
                                         </Button>
@@ -113,7 +113,7 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
                                             variant={!timeValue ? 'contained' : 'text'}
                                             size="small"
                                             sx={{ color: 'inherit' }}
-                                            onClick={(e) => handleChangeTime(e, false)}
+                                            onClick={() => handleChangeTime(false)}
                                         >
                                             Year
                                         </Button>
