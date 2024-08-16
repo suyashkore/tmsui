@@ -4,12 +4,12 @@ import { useEffect, useState } from 'react';
 import Grid from '@mui/material/Grid';
 
 // project imports
-import EarningCard from './EarningCard';
-import PopularCard from './PopularCard';
-import TotalOrderLineChartCard from './TotalOrderLineChartCard';
+import EarningCard from './components/EarningCard';
+import PopularCard from './components/PopularCard';
+import TotalOrderLineChartCard from './components/TotalOrderLineChartCard';
 import TotalIncomeDarkCard from '../../../ui-component/cards/TotalIncomeDarkCard';
 import TotalIncomeLightCard from '../../../ui-component/cards/TotalIncomeLightCard';
-import TotalGrowthBarChart from './TotalGrowthBarChart';
+import TotalGrowthBarChart from './components/TotalGrowthBarChart';
 
 import { gridSpacing } from 'store/constant';
 
@@ -18,7 +18,7 @@ import StorefrontTwoToneIcon from '@mui/icons-material/StorefrontTwoTone';
 
 // ==============================|| DEFAULT DASHBOARD ||============================== //
 
-const Dashboard = () => {
+const ExecSummary = () => {
     const [isLoading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -68,4 +68,4 @@ const Dashboard = () => {
     );
 };
 
-export default Dashboard;
+export default ExecSummary;
