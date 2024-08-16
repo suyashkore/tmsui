@@ -138,7 +138,7 @@ const LocalizationSection = () => {
                                             <ListItemText
                                                 primary={
                                                     <Grid container>
-                                                        <Typography color="textPrimary">Marathi</Typography>
+                                                        <Typography color="textPrimary">मराठी</Typography>
                                                         <Typography variant="caption" color="textSecondary" sx={{ ml: '8px' }}>
                                                             (Marathi)
                                                         </Typography>
@@ -150,7 +150,7 @@ const LocalizationSection = () => {
                                             <ListItemText
                                                 primary={
                                                     <Grid container>
-                                                        <Typography color="textPrimary">Hindi</Typography>
+                                                        <Typography color="textPrimary">हिन्दी</Typography>
                                                         <Typography variant="caption" color="textSecondary" sx={{ ml: '8px' }}>
                                                             (Hindi)
                                                         </Typography>
