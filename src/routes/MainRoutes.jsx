@@ -7,7 +7,7 @@ import Loadable from 'ui-component/Loadable';
 import AuthGuard from 'utils/route-guard/AuthGuard';
 
 // dashboard routing
-const DashboardDefault = Loadable(lazy(() => import('views/dashboard/ExecutiveSummary')));
+const DashboardDefault = Loadable(lazy(() => import('features/dashboard/ExecutiveSummary')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
