@@ -160,7 +160,7 @@ const ProfileSection = () => {
                                                         {user?.name}
                                                     </Typography>
                                                 </Stack>
-                                                <Typography variant="subtitle2">Project Admin</Typography>
+                                                <Typography variant="subtitle2">{user?.job_title}</Typography>
                                             </Stack>
                                             <Divider />
                                         </Box>

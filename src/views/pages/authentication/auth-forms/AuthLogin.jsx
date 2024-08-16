@@ -6,9 +6,7 @@ import { Link } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Checkbox from '@mui/material/Checkbox';
 import FormControl from '@mui/material/FormControl';
-import FormControlLabel from '@mui/material/FormControlLabel';
 import FormHelperText from '@mui/material/FormHelperText';
 import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
@@ -17,7 +15,7 @@ import InputLabel from '@mui/material/InputLabel';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import Typography from '@mui/material/Typography';
 
-// third party
+// third-party
 import * as Yup from 'yup';
 import { Formik } from 'formik';
 
@@ -38,8 +36,6 @@ const JWTLogin = ({ loginProp, ...others }) => {
     const { login } = useAuth();
     const scriptedRef = useScriptRef();
 
-    const [checked, setChecked] = React.useState(true);
-
     const [showPassword, setShowPassword] = React.useState(false);
     const handleClickShowPassword = () => {
         setShowPassword(!showPassword);
@@ -52,17 +48,19 @@ const JWTLogin = ({ loginProp, ...others }) => {
     return (
         <Formik
             initialValues={{
-                email: 'info@codedthemes.com',
-                password: '123456',
+                tenant_id: '', // Changed null to empty string
+                login_id: 'admin',
+                password: '007',
                 submit: null
             }}
             validationSchema={Yup.object().shape({
-                email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
+                tenant_id: Yup.number().nullable(true).typeError('Company Group ID must be a number'),
+                login_id: Yup.string().max(24).required('Login ID is required'),
                 password: Yup.string().max(255).required('Password is required')
             })}
             onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
                 try {
-                    await login(values.email, values.password);
+                    await login(values.tenant_id, values.login_id, values.password);
 
                     if (scriptedRef.current) {
                         setStatus({ success: true });
@@ -80,20 +78,38 @@ const JWTLogin = ({ loginProp, ...others }) => {
         >
             {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
                 <form noValidate onSubmit={handleSubmit} {...others}>
-                    <FormControl fullWidth error={Boolean(touched.email && errors.email)} sx={{ ...theme.typography.customInput }}>
-                        <InputLabel htmlFor="outlined-adornment-email-login">Email Address / Username</InputLabel>
+                    <FormControl fullWidth error={Boolean(touched.tenant_id && errors.tenant_id)} sx={{ ...theme.typography.customInput }}>
+                        <InputLabel htmlFor="outlined-adornment-tenant-id">Company Group ID</InputLabel>
                         <OutlinedInput
-                            id="outlined-adornment-email-login"
-                            type="email"
-                            value={values.email}
-                            name="email"
+                            id="outlined-adornment-tenant-id"
+                            type="number"
+                            value={values.tenant_id}
+                            name="tenant_id"
                             onBlur={handleBlur}
                             onChange={handleChange}
                             inputProps={{}}
                         />
-                        {touched.email && errors.email && (
-                            <FormHelperText error id="standard-weight-helper-text-email-login">
-                                {errors.email}
+                        {touched.tenant_id && errors.tenant_id && (
+                            <FormHelperText error id="standard-weight-helper-text-tenant-id">
+                                {errors.tenant_id}
+                            </FormHelperText>
+                        )}
+                    </FormControl>
+
+                    <FormControl fullWidth error={Boolean(touched.login_id && errors.login_id)} sx={{ ...theme.typography.customInput }}>
+                        <InputLabel htmlFor="outlined-adornment-login-id">Login ID</InputLabel>
+                        <OutlinedInput
+                            id="outlined-adornment-login-id"
+                            type="text"
+                            value={values.login_id}
+                            name="login_id"
+                            onBlur={handleBlur}
+                            onChange={handleChange}
+                            inputProps={{}}
+                        />
+                        {touched.login_id && errors.login_id && (
+                            <FormHelperText error id="standard-weight-helper-text-login-id">
+                                {errors.login_id}
                             </FormHelperText>
                         )}
                     </FormControl>

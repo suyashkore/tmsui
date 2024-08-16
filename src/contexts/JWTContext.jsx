@@ -3,7 +3,7 @@ import React, { createContext, useEffect, useReducer } from 'react';
 
 // third-party
 import { Chance } from 'chance';
-import { jwtDecode } from 'jwt-decode';
+import { jwtDecode}  from 'jwt-decode';
 
 // reducer - state management
 import { LOGIN, LOGOUT } from 'store/actions';
@@ -11,7 +11,7 @@ import accountReducer from 'store/accountReducer';
 
 // project imports
 import Loader from 'ui-component/Loader';
-import axios from 'utils/axios';
+import axiosServices from 'utils/axios';  // Import the centralized Axios instance
 
 const chance = new Chance();
 
@@ -22,24 +22,21 @@ const initialState = {
     user: null
 };
 
-const verifyToken = (serviceToken) => {
-    if (!serviceToken) {
+const verifyToken = (jwToken) => {
+    if (!jwToken) {
         return false;
     }
-    const decoded = jwtDecode(serviceToken);
-    /**
-     * Property 'exp' does not exist on type '<T = unknown>(token, options) => T'.
-     */
+    const decoded = jwtDecode(jwToken);
     return decoded.exp > Date.now() / 1000;
 };
 
-const setSession = (serviceToken) => {
-    if (serviceToken) {
-        localStorage.setItem('serviceToken', serviceToken);
-        axios.defaults.headers.common.Authorization = `Bearer ${serviceToken}`;
+const setSession = (jwToken) => {
+    if (jwToken) {
+        localStorage.setItem('jwToken', jwToken);
+        axiosServices.defaults.headers.common.Authorization = `Bearer ${jwToken}`;
     } else {
-        localStorage.removeItem('serviceToken');
-        delete axios.defaults.headers.common.Authorization;
+        localStorage.removeItem('jwToken');
+        delete axiosServices.defaults.headers.common.Authorization;
     }
 };
 
@@ -52,11 +49,29 @@ export const JWTProvider = ({ children }) => {
     useEffect(() => {
         const init = async () => {
             try {
-                const serviceToken = window.localStorage.getItem('serviceToken');
-                if (serviceToken && verifyToken(serviceToken)) {
-                    setSession(serviceToken);
-                    const response = await axios.get('/api/account/me');
-                    const { user } = response.data;
+                const jwToken = window.localStorage.getItem('jwToken');
+                if (jwToken && verifyToken(jwToken)) {
+                    setSession(jwToken);
+                    const decodedToken = jwtDecode(jwToken);
+
+                    // Extract the user details from the token payload
+                    const user = {
+                        user_id: decodedToken.user_id,
+                        tenant_id: decodedToken.tenant_id,
+                        tenant_name: decodedToken.tenant_name,
+                        tenant_logo_url: decodedToken.tenant_logo_url,
+                        name: decodedToken.name,
+                        job_title: decodedToken.job_title,
+                        department: decodedToken.department,
+                        profile_pic_url: decodedToken.profile_pic_url,
+                        login_id: decodedToken.login_id,
+                        mobile: decodedToken.mobile,
+                        email: decodedToken.email,
+                        user_type: decodedToken.user_type,
+                        role_name: decodedToken.role_name,
+                        privileges: decodedToken.privileges
+                    };
+
                     dispatch({
                         type: LOGIN,
                         payload: {
@@ -80,10 +95,39 @@ export const JWTProvider = ({ children }) => {
         init();
     }, []);
 
-    const login = async (email, password) => {
-        const response = await axios.post('/api/account/login', { email, password });
-        const { serviceToken, user } = response.data;
-        setSession(serviceToken);
+    const login = async (tenant_id, login_id, password) => {
+
+        // Convert empty tenant_id string to null
+        tenant_id = tenant_id === '' ? null : tenant_id;
+
+        // Now using the centralized axios instance without the full URL
+        const response = await axiosServices.post('/tapi/v1/userauth/withloginid', {
+            tenant_id,
+            login_id,
+            password
+        });
+        const { token } = response.data;
+        setSession(token);
+        const decodedToken = jwtDecode(token);
+
+        // Extract the user details from the token payload
+        const user = {
+            user_id: decodedToken.user_id,
+            tenant_id: decodedToken.tenant_id,
+            tenant_name: decodedToken.tenant_name,
+            tenant_logo_url: decodedToken.tenant_logo_url,
+            name: decodedToken.name,
+            job_title: decodedToken.job_title,
+            department: decodedToken.department,
+            profile_pic_url: decodedToken.profile_pic_url,
+            login_id: decodedToken.login_id,
+            mobile: decodedToken.mobile,
+            email: decodedToken.email,
+            user_type: decodedToken.user_type,
+            role_name: decodedToken.role_name,
+            privileges: decodedToken.privileges
+        };
+
         dispatch({
             type: LOGIN,
             payload: {
@@ -93,51 +137,19 @@ export const JWTProvider = ({ children }) => {
         });
     };
 
-    const register = async (email, password, firstName, lastName) => {
-        // todo: this flow need to be recode as it not verified
-        const id = chance.bb_pin();
-        const response = await axios.post('/api/account/register', {
-            id,
-            email,
-            password,
-            firstName,
-            lastName
-        });
-        let users = response.data;
-
-        if (window.localStorage.getItem('users') !== undefined && window.localStorage.getItem('users') !== null) {
-            const localUsers = window.localStorage.getItem('users');
-            users = [
-                ...JSON.parse(localUsers),
-                {
-                    id,
-                    email,
-                    password,
-                    name: `${firstName} ${lastName}`
-                }
-            ];
-        }
-
-        window.localStorage.setItem('users', JSON.stringify(users));
-    };
-
     const logout = () => {
         setSession(null);
         dispatch({ type: LOGOUT });
     };
-
-    const resetPassword = async (email) => {
-        console.log(email);
-    };
-
-    const updateProfile = () => {};
 
     if (state.isInitialized !== undefined && !state.isInitialized) {
         return <Loader />;
     }
 
     return (
-        <JWTContext.Provider value={{ ...state, login, logout, register, resetPassword, updateProfile }}>{children}</JWTContext.Provider>
+        <JWTContext.Provider value={{ ...state, login, logout }}>
+            {children}
+        </JWTContext.Provider>
     );
 };
 

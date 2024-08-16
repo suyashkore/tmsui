@@ -10,9 +10,9 @@ const axiosServices = axios.create({ baseURL: import.meta.env.VITE_APP_API_URL |
 
 axiosServices.interceptors.request.use(
     async (config) => {
-        const accessToken = localStorage.getItem('serviceToken');
-        if (accessToken) {
-            config.headers['Authorization'] = `Bearer ${accessToken}`;
+        const jwToken = localStorage.getItem('jwToken');
+        if (jwToken) {
+            config.headers['Authorization'] = `Bearer ${jwToken}`;
         }
         return config;
     },
@@ -24,8 +24,8 @@ axiosServices.interceptors.request.use(
 axiosServices.interceptors.response.use(
     (response) => response,
     (error) => {
-        if (error.response.status === 401 && !window.location.href.includes('/login')) {
-            window.location.pathname = '/login';
+        if (error.response && error.response.status === 401 && !window.location.href.includes('/')) {
+            window.location.pathname = '/';
         }
         return Promise.reject((error.response && error.response.data) || 'Wrong Services');
     }
