@@ -48,7 +48,7 @@ const JWTLogin = ({ loginProp, ...others }) => {
     return (
         <Formik
             initialValues={{
-                tenant_id: '', // Changed null to empty string
+                tenant_id: 1, // Changed null to empty string
                 login_id: 'admin',
                 password: '007',
                 submit: null

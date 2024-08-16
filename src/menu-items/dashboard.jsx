@@ -22,7 +22,7 @@ const dashboard = {
             type: 'item',
             url: '/dashboard/execsummary',
             icon: icons.IconDashboard,
-            breadcrumbs: false
+            breadcrumbs: true
         }
     ]
 };
