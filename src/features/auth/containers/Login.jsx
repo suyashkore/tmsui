@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import React, { useEffect } from 'react';
 
 // material-ui
 import Grid from '@mui/material/Grid';
@@ -12,6 +13,8 @@ import AuthCardWrapper from '../components/wrappers/AuthCardWrapper';
 import AuthLogin from '../components/forms/AuthLogin';
 import { Logo64 } from 'ui-component/Logo';
 import AuthFooter from 'ui-component/cards/AuthFooter';
+import { useDispatch } from 'store';
+import { openSnackbar } from 'store/slices/snackbar';
 
 // assets
 
@@ -19,6 +22,23 @@ import AuthFooter from 'ui-component/cards/AuthFooter';
 
 const Login = () => {
     const downMD = useMediaQuery((theme) => theme.breakpoints.down('md'));
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        // Retrieve and decode the logout message if it exists
+        const message = sessionStorage.getItem('logoutMessage');
+        if (message) {
+            dispatch(openSnackbar({
+                open: true,
+                message,
+                anchorOrigin: { vertical: 'top', horizontal: 'center' },
+                autoHideDuration: 15000
+            }));
+    
+            // Clear the message from sessionStorage after showing it
+            sessionStorage.removeItem('logoutMessage');
+        }
+    }, [dispatch]);
 
     return (
         <AuthWrapper>

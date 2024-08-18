@@ -49,7 +49,7 @@ const animation = {
 const Snackbar = () => {
     const dispatch = useDispatch();
     const snackbar = useSelector((state) => state.snackbar);
-    const { actionButton, anchorOrigin, alert, close, message, open, transition, variant } = snackbar;
+    const { actionButton, anchorOrigin, alert, close, message, open, transition, variant, autoHideDuration } = snackbar;
 
     const handleClose = (event, reason) => {
         if (reason === 'clickaway') {
@@ -65,7 +65,7 @@ const Snackbar = () => {
                 <MuiSnackbar
                     anchorOrigin={anchorOrigin}
                     open={open}
-                    autoHideDuration={1500}
+                    autoHideDuration={autoHideDuration} // Use the value from Redux state
                     onClose={handleClose}
                     message={message}
                     TransitionComponent={animation[transition]}
@@ -88,12 +88,12 @@ const Snackbar = () => {
                     TransitionComponent={animation[transition]}
                     anchorOrigin={anchorOrigin}
                     open={open}
-                    autoHideDuration={1500}
+                    autoHideDuration={autoHideDuration} // Use the value from Redux state
                     onClose={handleClose}
                 >
                     <Alert
                         variant={alert.variant}
-                        color={alert.color}
+                        color={alert.color} // Apply the color from Redux state
                         action={
                             <>
                                 {actionButton !== false && (

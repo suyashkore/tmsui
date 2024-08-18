@@ -1,18 +1,22 @@
 /**
- * axios setup to use mock service
+ * axios setup to use backend and mock service
  */
-
 import axios from 'axios';
-import useAuth from 'hooks/useAuth';
+import { store } from 'store';
+import { LOGOUT } from 'store/actions';
+import { openSnackbar } from 'store/slices/snackbar';
 
-// Function to handle logout
-const handleLogout = async () => {
-    try {
-        const { logout } = useAuth(); // Moved useAuth inside the function
-        await logout();
-    } catch (err) {
-        console.error(err);
-    }
+// Function to handle logout and cleanup
+const cleanupAndLogout = (message) => {
+    // Store the message in sessionStorage to persist across refreshes
+    sessionStorage.setItem('logoutMessage', message);
+
+    // Perform the usual cleanup and logout
+    localStorage.removeItem('jwToken');
+    store.dispatch({ type: LOGOUT });
+
+    // Redirect to the login page
+    window.location.href = `${import.meta.env.VITE_UI_APP_CONTEXT_ROOT_URL}/`;
 };
 
 // Create Axios instance for backend API calls
@@ -26,60 +30,48 @@ const backendApiCall = axios.create({
 // ==============================|| AXIOS - FOR BACKEND SERVICES ||============================== //
 
 backendApiCall.interceptors.request.use(
-    async (config) => {
+    (config) => {
         const jwToken = localStorage.getItem('jwToken');
         if (jwToken && !config.url.includes('/userauth/')) {
             config.headers['Authorization'] = `Bearer ${jwToken}`;
         }
         return config;
     },
-    (error) => {
-        return Promise.reject(error);
-    }
+    (error) => Promise.reject(error)
 );
-
-// Function to handle token removal, user context clearing, and redirection
-const handleAuthError = (message) => {
-    handleLogout();
-    const encodedMessage = encodeURIComponent(message);
-    window.location.href = `/?message=${encodedMessage}`;
-};
 
 backendApiCall.interceptors.response.use(
     (response) => response,
     (error) => {
         if (error.response) {
             const { status, data } = error.response;
-            console.error(data.error);
+            const errorMessage = data.error || 'An error occurred';
+
             switch (status) {
                 case 401:
-                    switch (data.error) {
-                        case 'Token is invalid':
-                            handleAuthError('Please relogin. Auth token is invalid.');
-                            break;
-                        case 'Token has expired':
-                            handleAuthError('Please relogin. Auth token has expired.');
-                            break;
-                        case 'Token is not provided':
-                            handleAuthError('Please relogin. Auth token is not provided.');
-                            break;
-                        default:
-                            handleAuthError('Please relogin. Unauthorized - missing or malformed auth token.');
-                    }
+                    cleanupAndLogout(errorMessage);
                     break;
                 case 403:
-                    switch (data.error) {
-                        case 'You do not have permission to perform this action':
-                        case 'CheckPrivileges resulted in insufficient privileges':
-                        default:
-                            console.error('Access denied.');
-                    }
+                    store.dispatch(openSnackbar({
+                        open: true,
+                        message: errorMessage,
+                        anchorOrigin: { vertical: 'top', horizontal: 'center' }, // Set the position to top-center
+                        autoHideDuration: 15000 // Set the duration to 15 seconds
+                    }));
                     break;
                 default:
-                    console.error('An error occurred.');
+                    console.error(errorMessage);
             }
+        } else {
+            // Handle non-API errors like network issues or server unavailability
+            store.dispatch(openSnackbar({
+                open: true,
+                message: 'Network error: Please check your connection or try again later.',
+                anchorOrigin: { vertical: 'top', horizontal: 'center' }, // Set the position to top-center
+                autoHideDuration: 15000 // Set the duration to 15 seconds
+            }));
         }
-        return Promise.reject((error.response && error.response.data) || 'Wrong Services');
+        return Promise.reject(error.response && error.response.data ? error.response.data : 'Wrong Services');
     }
 );
 
@@ -87,8 +79,6 @@ export default backendApiCall;
 
 export const fetcher = async (args) => {
     const [url, config] = Array.isArray(args) ? args : [args];
-
     const res = await backendApiCall.get(url, { ...config });
-
     return res.data;
 };

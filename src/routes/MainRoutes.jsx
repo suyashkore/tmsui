@@ -10,6 +10,9 @@ import AuthGuard from 'utils/route-guard/AuthGuard';
 const ExecSummary = Loadable(lazy(() => import('features/dashboard/execsummary/containers/ExecSummary')));
 
 const ComingSoon = Loadable(lazy(() => import('features/maintenance/containers/ComingSoon')));
+
+
+const Tenants = Loadable(lazy(() => import('features/tenants/containers/Tenants')));
 // ==============================|| MAIN ROUTING ||============================== //
 
 const MainRoutes = {
@@ -26,7 +29,7 @@ const MainRoutes = {
         },
         {
             path: '/md/tenants/list',
-            element: <ComingSoon />
+            element: <Tenants />
         },
         {
             path: '/md/companies/list',

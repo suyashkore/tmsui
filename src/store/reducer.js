@@ -4,7 +4,9 @@ import { persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
 // project imports
+import { LOGOUT } from './actions';
 import snackbarReducer from './slices/snackbar';
+import tenantReducer from './slices/tenant';
 
 // ==============================|| PLACEHOLDER PERSISTED REDUCER ||============================== //
 
@@ -25,10 +27,25 @@ const placeholderPersistedReducer = persistReducer(
 
 // ==============================|| ROOT REDUCER ||============================== //
 
-const rootReducer = combineReducers({
+const appReducer = combineReducers({
     snackbar: snackbarReducer,
-    placeholder: placeholderPersistedReducer // Placeholder persisted reducer
-    
+    placeholder: placeholderPersistedReducer, // Placeholder persisted reducer
+    tenant: tenantReducer
 });
+
+const rootReducer = (state, action) => {
+    if (action.type === LOGOUT) {
+        // Reset state completely
+        state = undefined;
+        
+        // Optionally clear all persisted data
+        Object.keys(localStorage).forEach((key) => {
+            if (key.startsWith('persist:')) {
+                localStorage.removeItem(key);
+            }
+        });
+    }
+    return appReducer(state, action);
+};
 
 export default rootReducer;

@@ -5,8 +5,8 @@ const initialState = {
     open: false,
     message: 'Note archived',
     anchorOrigin: {
-        vertical: 'bottom',
-        horizontal: 'right'
+        vertical: 'top', // Position at the top
+        horizontal: 'center' // Center horizontally
     },
     variant: 'default',
     alert: {
@@ -18,7 +18,8 @@ const initialState = {
     maxStack: 3,
     dense: false,
     iconVariant: 'hide',
-    actionButton: false
+    actionButton: false,
+    autoHideDuration: 15000 // Set the duration to 15 seconds (15000 ms)
 };
 
 // ==============================|| SLICE - SNACKBAR ||============================== //
@@ -28,7 +29,7 @@ const snackbar = createSlice({
     initialState,
     reducers: {
         openSnackbar(state, action) {
-            const { open, message, anchorOrigin, variant, alert, transition, close, actionButton } = action.payload;
+            const { open, message, anchorOrigin, variant, alert, transition, close, actionButton, autoHideDuration } = action.payload;
 
             state.action = !state.action;
             state.open = open || initialState.open;
@@ -42,6 +43,7 @@ const snackbar = createSlice({
             state.transition = transition || initialState.transition;
             state.close = close === false ? close : initialState.close;
             state.actionButton = actionButton || initialState.actionButton;
+            state.autoHideDuration = autoHideDuration || initialState.autoHideDuration;
         },
 
         closeSnackbar(state) {
