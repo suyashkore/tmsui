@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import { DataGrid, GridToolbarColumnsButton } from '@mui/x-data-grid';
@@ -6,20 +7,38 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import BlockIcon from '@mui/icons-material/Block';
 import Tooltip from '@mui/material/Tooltip';
-
-
+import AddIcon from '@mui/icons-material/Add';
+import VisibilityIcon from '@mui/icons-material/Visibility'; // New icon for view action
+import { IconUpload, IconDownload } from '@tabler/icons-react';
 import { useDispatch, useSelector } from 'store';
 import { getTenants } from 'store/slices/tenant';
 import MainCard from 'ui-component/cards/MainCard';
 
-// Custom Toolbar Component
-function CustomToolbar({ onEdit, onDisable, onDelete, hasSelection }) {
+function CustomToolbar({ onView, onEdit, onDisable, onDelete, hasSelection, onCreate, onImport, onExport }) {
     return (
         <Box sx={{ display: 'flex', justifyContent: 'space-between', p: 1 }}>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <GridToolbarColumnsButton />
 
-                {/* Edit Action */}
+                <Tooltip title="Create New">
+                    <IconButton color="primary" onClick={onCreate}>
+                        <AddIcon />
+                    </IconButton>
+                </Tooltip>
+
+                {/* View Action */}
+                <Tooltip title="View Selected">
+                    <span>
+                        <IconButton
+                            color="primary"
+                            onClick={onView}
+                            disabled={!hasSelection}
+                        >
+                            <VisibilityIcon />
+                        </IconButton>
+                    </span>
+                </Tooltip>
+
                 <Tooltip title="Edit Selected">
                     <span>
                         <IconButton
@@ -32,7 +51,6 @@ function CustomToolbar({ onEdit, onDisable, onDelete, hasSelection }) {
                     </span>
                 </Tooltip>
 
-                {/* Disable Action */}
                 <Tooltip title="Disable Selected">
                     <span>
                         <IconButton
@@ -45,7 +63,6 @@ function CustomToolbar({ onEdit, onDisable, onDelete, hasSelection }) {
                     </span>
                 </Tooltip>
 
-                {/* Delete Action */}
                 <Tooltip title="Delete Selected">
                     <span>
                         <IconButton
@@ -57,6 +74,18 @@ function CustomToolbar({ onEdit, onDisable, onDelete, hasSelection }) {
                         </IconButton>
                     </span>
                 </Tooltip>
+
+                <Tooltip title="Import">
+                    <IconButton color="primary" onClick={onImport}>
+                        <IconUpload />
+                    </IconButton>
+                </Tooltip>
+
+                <Tooltip title="Export">
+                    <IconButton color="primary" onClick={onExport}>
+                        <IconDownload />
+                    </IconButton>
+                </Tooltip>
             </Box>
         </Box>
     );
@@ -64,30 +93,22 @@ function CustomToolbar({ onEdit, onDisable, onDelete, hasSelection }) {
 
 const ListTenants = () => {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const { tenants, total, loading } = useSelector((state) => state.tenant);
     const [selectedRows, setSelectedRows] = useState([]);
     const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 5 });
     const [sortModel, setSortModel] = useState([]);
-    const [filterModel, setFilterModel] = useState({
-        name: '',
-        country: '',
-        state: '',
-        city: '',
-        pincode: '',
-        active: '',
-    });
 
     useEffect(() => {
         const queryParams = {
-            page: paginationModel.page + 1,
+            page: paginationModel.page + 1, // Backend expects 1-based page index
             per_page: paginationModel.pageSize,
             sort_by: sortModel[0]?.field || 'updated_at',
             sort_order: sortModel[0]?.sort || 'desc',
-            ...filterModel,
         };
 
         dispatch(getTenants(queryParams));
-    }, [dispatch, paginationModel, sortModel, filterModel]);
+    }, [dispatch, paginationModel, sortModel]);
 
     const columns = [
         { field: 'id', headerName: 'ID', width: 70 },
@@ -106,7 +127,7 @@ const ListTenants = () => {
             width: 100,
             renderCell: (params) => (
                 <img
-                    src={`http://localhost:8000${params.value}`}
+                    src={params.value ? `http://localhost:8000${params.value}` : 'path/to/default/image'}
                     alt="logo"
                     style={{ width: '16px', height: '16px' }}
                 />
@@ -122,8 +143,24 @@ const ListTenants = () => {
         setSelectedRows(selection);
     };
 
+    const handleCreate = () => {
+        navigate('/md/tenants/create');
+    };
+
+    const handleView = () => {
+        if (selectedRows.length === 1) {
+            navigate(`/md/tenants/view/id/${selectedRows[0]}`);
+        } else {
+            console.warn('Please select a single row to view.');
+        }
+    };
+
     const handleEdit = () => {
-        console.log('Edit selected rows:', selectedRows);
+        if (selectedRows.length === 1) {
+            navigate(`/md/tenants/edit/id/${selectedRows[0]}`);
+        } else {
+            console.warn('Please select a single row to edit.');
+        }
     };
 
     const handleDisable = () => {
@@ -134,10 +171,16 @@ const ListTenants = () => {
         console.log('Delete selected rows:', selectedRows);
     };
 
+    const handleImport = () => {
+        console.log('Import tenants data');
+    };
+
+    const handleExport = () => {
+        console.log('Export tenants data');
+    };
+
     return (
-        <MainCard
-            content={false}
-        >
+        <MainCard content={false}>
             <Box sx={{ 
                 width: '100%',
                 '& .MuiDataGrid-root': {
@@ -156,7 +199,7 @@ const ListTenants = () => {
             }}>
                 <DataGrid
                     columns={columns}
-                    rows={tenants.data || []} // Ensure the rows are passed as an array
+                    rows={tenants.data || []} // Make sure rows are passed as an array
                     paginationMode="server"
                     sortingMode="server"
                     filterMode="server"
@@ -169,14 +212,18 @@ const ListTenants = () => {
                     checkboxSelection
                     onRowSelectionModelChange={handleRowSelection}
                     slots={{
-                        toolbar: CustomToolbar, // Use the custom toolbar
+                        toolbar: CustomToolbar,
                     }}
                     slotProps={{
                         toolbar: {
+                            onView: handleView, // Pass view handler
                             onEdit: handleEdit,
                             onDisable: handleDisable,
                             onDelete: handleDelete,
                             hasSelection: selectedRows.length > 0,
+                            onCreate: handleCreate,
+                            onImport: handleImport,
+                            onExport: handleExport,
                         },
                     }}
                 />

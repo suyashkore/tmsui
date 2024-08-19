@@ -13,6 +13,13 @@ const ComingSoon = Loadable(lazy(() => import('features/maintenance/containers/C
 
 
 const Tenants = Loadable(lazy(() => import('features/tenants/containers/Tenants')));
+
+const CreateTenant = Loadable(lazy(() => import('features/tenants/containers/CreateTenant')));
+
+const EditTenant = Loadable(lazy(() => import('features/tenants/containers/EditTenant')));
+
+const ViewTenant = Loadable(lazy(() => import('features/tenants/containers/ViewTenant')));
+
 // ==============================|| MAIN ROUTING ||============================== //
 
 const MainRoutes = {
@@ -30,6 +37,18 @@ const MainRoutes = {
         {
             path: '/md/tenants/list',
             element: <Tenants />
+        },
+        {
+            path: '/md/tenants/create',
+            element: <CreateTenant />
+        },
+        {
+            path: '/md/tenants/edit/id/:id',
+            element: <EditTenant />
+        },
+        {
+            path: '/md/tenants/view/id/:id',
+            element: <ViewTenant />
         },
         {
             path: '/md/companies/list',
