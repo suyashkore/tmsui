@@ -9,7 +9,7 @@ import { dispatch } from '../index';
 
 const initialState = {
     error: null,
-    tenants: [],
+    tenants: [], // This is the correct field to store tenants data
 };
 
 const slice = createSlice({
@@ -22,7 +22,7 @@ const slice = createSlice({
         },
         // GET TENANTS
         getTenantsSuccess(state, action) {
-            state.customers = action.payload;
+            state.tenants = action.payload; // Store data in the correct field
         }
     }
 });
