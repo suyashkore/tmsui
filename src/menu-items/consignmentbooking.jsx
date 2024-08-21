@@ -30,16 +30,15 @@ const consignmentBooking = {
             type: 'item',
             link: '/consignment/booking/lr/:view',
             url: '/consignment/booking/lr/list',
-            breadcrumbs: false
+            breadcrumbs: true
         },
         {
             id: 'trackconsignment',
             title: <FormattedMessage id="trackconsignment" />,
             icon: icons.IconMapPinBolt,
             type: 'item',
-            link: '/consignment/tracker/:view',
-            url: '/consignment/tracker/list',
-            breadcrumbs: false
+            url: '/consignment/tracker',
+            breadcrumbs: true
         }    
     ]
 };

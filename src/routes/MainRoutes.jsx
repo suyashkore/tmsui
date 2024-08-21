@@ -35,6 +35,78 @@ const MainRoutes = {
             element: <ExecSummary />
         },
         {
+            path: '/consignment/booking/lr/list',
+            element: <ComingSoon />
+        },
+        {
+            path: '/consignment/tracker',
+            element: <ComingSoon />
+        },
+        {
+            path: '/transit/ewb/list',
+            element: <ComingSoon />
+        },
+        {
+            path: '/transit/prn/list',
+            element: <ComingSoon />
+        },
+        {
+            path: '/transit/ls/list',
+            element: <ComingSoon />
+        },
+        {
+            path: '/transit/thc/list',
+            element: <ComingSoon />
+        },
+        {
+            path: '/transit/drs/list',
+            element: <ComingSoon />
+        },
+        {
+            path: '/transit/manifest/list',
+            element: <ComingSoon />
+        },
+        {
+            path: '/transit/lmd/list',
+            element: <ComingSoon />
+        },
+        {
+            path: '/txn/pod/list',
+            element: <ComingSoon />
+        },
+        {
+            path: '/txn/topay/collection/list',
+            element: <ComingSoon />
+        },
+        {
+            path: '/txn/fv/voucher/list',
+            element: <ComingSoon />
+        },
+        {
+            path: '/txn/driver/voucher/list',
+            element: <ComingSoon />
+        },
+        {
+            path: '/txn/loader/expenses/list',
+            element: <ComingSoon />
+        },
+        {
+            path: '/txn/fuel/log/list',
+            element: <ComingSoon />
+        },
+        {
+            path: '/txn/pod/statement/list',
+            element: <ComingSoon />
+        },
+        {
+            path: '/txn/customer/invoices/list',
+            element: <ComingSoon />
+        },
+        {
+            path: '/bi/sales-register/list',
+            element: <ComingSoon />
+        },
+        {
             path: '/md/org/tenants/list',
             element: <Tenants />
         },
@@ -55,19 +127,63 @@ const MainRoutes = {
             element: <ComingSoon />
         },
         {
-            path: '/md/privileges/list',
+            path: '/md/org/users/privileges/list',
             element: <ComingSoon />
         },
         {
-            path: '/md/roles/list',
+            path: '/md/org/users/roles/list',
             element: <ComingSoon />
         },
         {
-            path: '/md/users/list',
+            path: '/md/org/users/list',
             element: <ComingSoon />
         },
         {
-            path: '/md/offices/list',
+            path: '/md/org/offices/list',
+            element: <ComingSoon />
+        },
+        {
+            path: '/md/ext/org/customers/list',
+            element: <ComingSoon />
+        },
+        {
+            path: '/md/ext/org/channelpartners/list',
+            element: <ComingSoon />
+        },
+        {
+            path: '/md/ext/org/vendors/list',
+            element: <ComingSoon />
+        },
+        {
+            path: '/md/fleet/vehicles/list',
+            element: <ComingSoon />
+        },
+        {
+            path: '/md/places/geohierarchies/list',
+            element: <ComingSoon />
+        },
+        {
+            path: '/md/places/stationcoverage/list',
+            element: <ComingSoon />
+        },
+        {
+            path: '/md/contracts/loader/list',
+            element: <ComingSoon />
+        },
+        {
+            path: '/md/contracts/driver/list',
+            element: <ComingSoon />
+        },
+        {
+            path: '/md/contracts/customer/list',
+            element: <ComingSoon />
+        },
+        {
+            path: '/md/contracts/cp/list',
+            element: <ComingSoon />
+        },
+        {
+            path: '/md/contracts/fleetvendor/list',
             element: <ComingSoon />
         }
     ]
