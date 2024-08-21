@@ -5,6 +5,7 @@ import { getTenantById } from 'store/slices/tenant';
 import ViewTenantComponent from '../components/ViewTenantComponent';
 import MainCard from 'ui-component/cards/MainCard';
 import { CircularProgress, Box, Typography } from '@mui/material'; // Import Typography
+import Breadcrumbs from 'ui-component/extended/Breadcrumbs';
 
 const ViewTenant = () => {
   const { id } = useParams();

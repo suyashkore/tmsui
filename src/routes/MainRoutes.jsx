@@ -35,23 +35,23 @@ const MainRoutes = {
             element: <ExecSummary />
         },
         {
-            path: '/md/tenants/list',
+            path: '/md/org/tenants/list',
             element: <Tenants />
         },
         {
-            path: '/md/tenants/create',
+            path: '/md/org/tenants/create',
             element: <CreateTenant />
         },
         {
-            path: '/md/tenants/edit/id/:id',
+            path: '/md/org/tenants/edit/id/:id',
             element: <EditTenant />
         },
         {
-            path: '/md/tenants/view/id/:id',
+            path: '/md/org/tenants/view/id/:id',
             element: <ViewTenant />
         },
         {
-            path: '/md/companies/list',
+            path: '/md/org/companies/list',
             element: <ComingSoon />
         },
         {

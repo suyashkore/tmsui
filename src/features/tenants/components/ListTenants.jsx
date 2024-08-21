@@ -144,12 +144,12 @@ const ListTenants = () => {
     };
 
     const handleCreate = () => {
-        navigate('/md/tenants/create');
+        navigate('/md/org/tenants/create');
     };
 
     const handleView = () => {
         if (selectedRows.length === 1) {
-            navigate(`/md/tenants/view/id/${selectedRows[0]}`);
+            navigate(`/md/org/tenants/view/id/${selectedRows[0]}`);
         } else {
             console.warn('Please select a single row to view.');
         }
@@ -157,7 +157,7 @@ const ListTenants = () => {
 
     const handleEdit = () => {
         if (selectedRows.length === 1) {
-            navigate(`/md/tenants/edit/id/${selectedRows[0]}`);
+            navigate(`/md/org/tenants/edit/id/${selectedRows[0]}`);
         } else {
             console.warn('Please select a single row to edit.');
         }
