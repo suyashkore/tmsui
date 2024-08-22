@@ -2,10 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'store';
 import { getTenantById } from 'store/slices/tenant';
-import ViewTenantComponent from '../components/ViewTenantComponent';
+import ShowTenant from '../components/ShowTenant';
 import MainCard from 'ui-component/cards/MainCard';
 import { CircularProgress, Box, Typography } from '@mui/material'; // Import Typography
-import Breadcrumbs from 'ui-component/extended/Breadcrumbs';
 
 const ViewTenant = () => {
   const { id } = useParams();
@@ -36,7 +35,7 @@ const ViewTenant = () => {
   return (
     <MainCard title="Tenant Details">
       {tenantData ? (
-        <ViewTenantComponent tenant={tenantData} isViewMode={true} />
+        <ShowTenant tenant={tenantData} isViewMode={true} />
       ) : (
         <Typography>No tenant data found</Typography> // This is where Typography is needed
       )}

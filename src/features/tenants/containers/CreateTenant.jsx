@@ -1,26 +1,15 @@
+// tmsui/src/features/tenants/containers/CreateTenant.jsx
+
 import React from 'react';
-import { useDispatch } from 'store';
-import CrUpFormTenant from '../components/CrUpFormTenant';
-import { createTenant } from 'store/slices/tenant';
+import StepperTenant from '../components/StepperTenant';
+import MainCard from 'ui-component/cards/MainCard';
 
 const CreateTenant = () => {
-    const dispatch = useDispatch();
-
-    const initialValues = {
-        name: '',
-        country: '',
-        state: '',
-        city: '',
-        pincode: '',
-        address: '',
-        active: false,
-    };
-
-    const handleSubmit = (values) => {
-        dispatch(createTenant(values));
-    };
-
-    return <CrUpFormTenant initialValues={initialValues} isEditMode={false} onSubmit={handleSubmit} />;
+    return (
+        <MainCard title="Create Tenant">
+            <StepperTenant />
+        </MainCard>
+    );
 };
 
 export default CreateTenant;
