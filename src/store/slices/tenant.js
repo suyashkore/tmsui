@@ -34,7 +34,7 @@ export const getTenants = createAsyncThunk(
     async (params, { rejectWithValue }) => {
         try {
             const response = await backendApiCall.get('/tenants', { params });
-            return response.data;
+            return response;
         } catch (error) {
             const apiErrorResponse = ApiErrorResponse.fromApiResponse(error);
             return rejectWithValue(apiErrorResponse);
