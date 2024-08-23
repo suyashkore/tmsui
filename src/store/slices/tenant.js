@@ -16,7 +16,7 @@ import ApiErrorResponse from 'features/common/models/ApiErrorResponse';
 
 const initialState = {
     error: null,
-    tenants: [],
+    tenants: [], // Ensure this remains an array
     total: 0,
     tenant: null,
     loading: false,
@@ -106,7 +106,7 @@ const slice = createSlice({
                 state.error = null;
             })
             .addCase(getTenants.fulfilled, (state, action) => {
-                state.tenants = action.payload.data; // Assuming API response contains { data, total }
+                state.tenants = action.payload.data || []; // Ensure this remains an array
                 state.total = action.payload.data.total;
                 state.loading = false;
             })
@@ -135,7 +135,12 @@ const slice = createSlice({
                 state.error = null;
             })
             .addCase(createTenant.fulfilled, (state, action) => {
-                state.tenants.push(action.payload);
+                // Ensure the state.tenants remains an array
+                if (Array.isArray(state.tenants)) {
+                    state.tenants.push(action.payload);
+                } else {
+                    state.tenants = [action.payload]; // Reassign as a new array if it's not already an array
+                }
                 state.loading = false;
             })
             .addCase(createTenant.rejected, (state, action) => {
