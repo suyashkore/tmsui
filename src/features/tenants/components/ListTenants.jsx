@@ -127,7 +127,7 @@ const ListTenants = () => {
             width: 100,
             renderCell: (params) => (
                 <img
-                    src={params.value ? `http://localhost:8000${params.value}` : 'path/to/default/image'}
+                    src={params.value ? `${import.meta.env.VITE_BACKEND_API_URL}${params.value}` : 'path/to/default/image'}
                     alt="logo"
                     style={{ width: '16px', height: '16px' }}
                 />
