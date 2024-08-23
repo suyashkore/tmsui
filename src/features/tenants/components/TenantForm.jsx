@@ -15,10 +15,26 @@ const validationSchema = Yup.object({
     country: Yup.string().required('Country is required'),
     state: Yup.string().required('State is required'),
     city: Yup.string().required('City is required'),
-    pincode: Yup.string().required('Pincode is required'),//.matches(/^\d{6}$/, 'Pincode must be 6 digits'),
+    pincode: Yup.string().required('Pincode is required').matches(/^\d{6}$/, 'Pincode must be 6 digits'),
     address: Yup.string().required('Address is required'),
-    latitude: Yup.string().required('Latitude is required'),
-    longitude: Yup.string().required('Longitude is required'),
+    latitude: Yup.string()
+        .required('Latitude is required')
+        .test(
+            'is-decimal',
+            'Latitude must be a decimal number with at least 4 digits after the decimal',
+            (value) => {
+                return /^-?\d+(\.\d{4,})$/.test(value);
+            }
+        ),
+    longitude: Yup.string()
+        .required('Longitude is required')
+        .test(
+            'is-decimal',
+            'Longitude must be a decimal number with at least 4 digits after the decimal',
+            (value) => {
+                return /^-?\d+(\.\d{4,})$/.test(value);
+            }
+        ),
     description: Yup.string()
 });
 
