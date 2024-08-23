@@ -16,7 +16,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 
 // project imports
 import useConfig from 'hooks/useConfig';
-import { handlerDrawerOpen, useGetMenuMaster } from 'api/menu';
+import { handlerDrawerOpen, useGetMenuMaster } from 'layout/MainLayout/state/menu';
 import { MenuOrientation, ThemeMode } from 'config';
 
 // assets

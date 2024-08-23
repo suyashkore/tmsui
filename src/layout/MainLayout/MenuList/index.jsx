@@ -15,7 +15,7 @@ import useConfig from 'hooks/useConfig';
 
 import { MenuOrientation } from 'config';
 import { HORIZONTAL_MAX_ITEM } from 'config';
-import { useGetMenuMaster } from 'api/menu';
+import { useGetMenuMaster } from 'layout/MainLayout/state/menu';
 
 // ==============================|| SIDEBAR MENU LIST ||============================== //
 

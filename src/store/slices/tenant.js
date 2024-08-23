@@ -107,7 +107,7 @@ const slice = createSlice({
             })
             .addCase(getTenants.fulfilled, (state, action) => {
                 state.tenants = action.payload.data; // Assuming API response contains { data, total }
-                state.total = action.payload.total;
+                state.total = action.payload.data.total;
                 state.loading = false;
             })
             .addCase(getTenants.rejected, (state, action) => {

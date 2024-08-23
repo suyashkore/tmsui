@@ -204,7 +204,8 @@ const ListTenants = () => {
                     sortingMode="server"
                     filterMode="server"
                     rowCount={total} // This is crucial for server-side pagination
-                    loading={loading}
+                    loading={loading} 
+                    pageSizeOptions={[5, 10, 20]} 
                     pageSize={paginationModel.pageSize}
                     paginationModel={paginationModel}
                     onPaginationModelChange={setPaginationModel}

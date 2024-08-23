@@ -15,7 +15,7 @@ import LocalizationSection from './LocalizationSection';
 import FullScreenSection from './FullScreenSection';
 
 
-import { handlerDrawerOpen, useGetMenuMaster } from 'api/menu';
+import { handlerDrawerOpen, useGetMenuMaster } from 'layout/MainLayout/state/menu';
 import { MenuOrientation, ThemeMode } from 'config';
 
 // assets

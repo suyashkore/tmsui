@@ -25,7 +25,7 @@ import NavItem from '../NavItem';
 
 import useConfig from 'hooks/useConfig';
 import Transitions from 'ui-component/extended/Transitions';
-import { useGetMenuMaster } from 'api/menu';
+import { useGetMenuMaster } from 'layout/MainLayout/state/menu';
 import { MenuOrientation } from 'config';
 
 // assets

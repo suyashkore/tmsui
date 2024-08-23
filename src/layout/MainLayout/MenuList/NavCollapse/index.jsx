@@ -23,7 +23,7 @@ import Transitions from 'ui-component/extended/Transitions';
 
 import { MenuOrientation, ThemeMode } from 'config';
 import useConfig from 'hooks/useConfig';
-import { useGetMenuMaster } from 'api/menu';
+import { useGetMenuMaster } from 'layout/MainLayout/state/menu';
 
 // assets
 import { IconChevronDown, IconChevronRight, IconChevronUp } from '@tabler/icons-react';

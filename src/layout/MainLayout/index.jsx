@@ -19,7 +19,7 @@ import Loader from 'ui-component/Loader';
 import Breadcrumbs from 'ui-component/extended/Breadcrumbs';
 
 import useConfig from 'hooks/useConfig';
-import { handlerDrawerOpen, useGetMenuMaster } from 'api/menu';
+import { handlerDrawerOpen, useGetMenuMaster } from 'layout/MainLayout/state/menu';
 import { MenuOrientation } from 'config';
 
 // ==============================|| MAIN LAYOUT ||============================== //
