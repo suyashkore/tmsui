@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'store';
-import TenantForm from '../components/CrUpFormTenant';
+import TenantForm from '../components/TenantForm';
 import { updateTenant, getTenantById } from 'store/slices/tenant';
 import { useParams } from 'react-router-dom';
 
