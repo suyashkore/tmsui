@@ -1,41 +1,36 @@
-// tmsui/src/features/tenants/components/TenantConfirmation.jsx
-
 import React from 'react';
 import { Grid, Typography, Box, Alert, Stack, Button, List, ListItem, ListItemText } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import ShowTenant from './ShowTenant';
+import TenantDetails from './TenantDetails';
 import AnimateButton from 'ui-component/extended/AnimateButton';
-import ApiErrorResponse from '../../common/models/ApiErrorResponse'; // Import the ApiErrorResponse model
-
-// ==============================|| TENANT CONFIRMATION COMPONENT ||============================== //
+import ApiErrorResponse from '../../common/models/ApiErrorResponse';
 
 /**
  * TenantConfirmation Component
- * - Displays the success or error message after the tenant creation API call.
- * - If successful, it shows the details of the created tenant using the ShowTenant component.
- * - Includes an "OK" button that navigates back to the tenant list.
+ * - This component displays the confirmation step after the tenant creation API call.
+ * - It shows either a success or error message and, in the case of success, details of the created tenant.
  *
  * @param {string} message - The message returned from the API call (success or error).
- * @param {boolean} apiSuccess - Indicates whether the API call was successful or not.
+ * @param {boolean} apiSuccess - Indicates whether the API call was successful.
  * @param {Object} tenantData - The data of the newly created tenant.
- * @param {ApiErrorResponse} errorResponse - The error response object returned from the API call, containing error details.
- * @returns {JSX.Element} A confirmation step displaying the result of the tenant creation process.
+ * @param {ApiErrorResponse} errorResponse - The error response object containing field-specific errors.
+ * @returns {JSX.Element} A confirmation screen displaying the result of the tenant creation process.
  */
 const TenantConfirmation = ({ message, apiSuccess, tenantData, errorResponse }) => {
-    const navigate = useNavigate(); // Initialize navigate function for redirection
+    const navigate = useNavigate(); // Initialize the navigation function
 
-    // Extract field-specific errors from the errorResponse, if available
+    // Extract field-specific errors from the error response, if available
     const fieldErrors = errorResponse?.errors || null;
 
     return (
         <Box>
-            {/* Display the success or error message */}
+            {/* Show the success or error message */}
             <Alert severity={apiSuccess ? 'success' : 'error'} sx={{ mb: 3 }}>
                 {message}
             </Alert>
 
-             {/* Show detailed error messages if present and not empty */}
-             {!apiSuccess && fieldErrors && Object.keys(fieldErrors).length > 0 && (
+            {/* Show detailed field errors if available */}
+            {!apiSuccess && fieldErrors && Object.keys(fieldErrors).length > 0 && (
                 <Box sx={{ mb: 3 }}>
                     <Typography variant="h6" gutterBottom>
                         Please check the following errors:
@@ -44,8 +39,8 @@ const TenantConfirmation = ({ message, apiSuccess, tenantData, errorResponse }) 
                         {Object.entries(fieldErrors).map(([field, errors]) => (
                             <ListItem key={field} disablePadding>
                                 <ListItemText
-                                    primary={field.charAt(0).toUpperCase() + field.slice(1)} // Capitalize the field name
-                                    secondary={errors.join(', ')} // Combine multiple errors for the field
+                                    primary={field.charAt(0).toUpperCase() + field.slice(1)} // Capitalize field name
+                                    secondary={errors.join(', ')} // Join multiple errors for the field
                                 />
                             </ListItem>
                         ))}
@@ -53,18 +48,18 @@ const TenantConfirmation = ({ message, apiSuccess, tenantData, errorResponse }) 
                 </Box>
             )}
 
-            {/* If the API call was successful, display the tenant details */}
+            {/* Display the tenant details if the API call was successful */}
             {apiSuccess && (
                 <Grid container spacing={2} sx={{ mb: 3 }}>
-                    <ShowTenant tenant={tenantData} isViewMode={true} />
+                    <TenantDetails tenant={tenantData} mode="show" />
                 </Grid>
             )}
 
-            {/* OK Button to navigate back to tenant list using Stack and AnimateButton */}
+            {/* Navigation button to return to the tenant list */}
             <Stack direction="row" justifyContent="flex-end" sx={{ mt: 3 }}>
                 <AnimateButton>
                     <Button
-                        onClick={() => navigate('/md/org/tenants/list')} // Navigates back to tenants list
+                        onClick={() => navigate('/md/org/tenants/list')}
                         variant="contained"
                         color="primary"
                     >

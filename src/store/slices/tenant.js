@@ -4,6 +4,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import backendApiCall from 'utils/backendApiCall';
 import ApiErrorResponse from 'features/common/models/ApiErrorResponse';
+import { Tenant } from 'features/tenants/models/TenantModel'; // Import the Tenant model
 
 // ----------------------------------------------------------------------
 // Initial State: This defines the default state for the tenant slice.
@@ -34,7 +35,9 @@ export const getTenants = createAsyncThunk(
     async (params, { rejectWithValue }) => {
         try {
             const response = await backendApiCall.get('/tenants', { params });
-            return response;
+            // Convert each tenant to the Tenant model
+            const tenants = response.data.data.map((tenant) => Tenant.fromApiResponse(tenant));
+            return { data: tenants, total: response.data.total };
         } catch (error) {
             const apiErrorResponse = ApiErrorResponse.fromApiResponse(error);
             return rejectWithValue(apiErrorResponse);
@@ -48,7 +51,8 @@ export const getTenantById = createAsyncThunk(
     async (id, { rejectWithValue }) => {
         try {
             const response = await backendApiCall.get(`/tenants/id/${id}`);
-            return response.data;
+            // Convert the fetched tenant to the Tenant model
+            return Tenant.fromApiResponse(response.data);
         } catch (error) {
             const apiErrorResponse = ApiErrorResponse.fromApiResponse(error);
             return rejectWithValue(apiErrorResponse);
@@ -62,12 +66,10 @@ export const createTenant = createAsyncThunk(
     async (data, { rejectWithValue }) => {
         try {
             const response = await backendApiCall.post('/tenants', data);
-            return response.data;
+            // Convert the created tenant to the Tenant model
+            return Tenant.fromApiResponse(response.data);
         } catch (error) {
-            // Parse the error using ApiErrorResponse
             const apiErrorResponse = ApiErrorResponse.fromApiResponse(error);
-
-            // Reject the error with the parsed ApiErrorResponse
             return rejectWithValue(apiErrorResponse);
         }
     }
@@ -79,7 +81,8 @@ export const updateTenant = createAsyncThunk(
     async ({ id, data }, { rejectWithValue }) => {
         try {
             const response = await backendApiCall.put(`/tenants/${id}`, data);
-            return response.data;
+            // Convert the updated tenant to the Tenant model
+            return Tenant.fromApiResponse(response.data);
         } catch (error) {
             const apiErrorResponse = ApiErrorResponse.fromApiResponse(error);
             return rejectWithValue(apiErrorResponse);
@@ -107,7 +110,7 @@ const slice = createSlice({
             })
             .addCase(getTenants.fulfilled, (state, action) => {
                 state.tenants = action.payload.data || []; // Ensure this remains an array
-                state.total = action.payload.data.total;
+                state.total = action.payload.total;
                 state.loading = false;
             })
             .addCase(getTenants.rejected, (state, action) => {
@@ -121,7 +124,7 @@ const slice = createSlice({
                 state.error = null;
             })
             .addCase(getTenantById.fulfilled, (state, action) => {
-                state.tenant = action.payload;
+                state.tenant = action.payload; // The payload is already a Tenant instance
                 state.loading = false;
             })
             .addCase(getTenantById.rejected, (state, action) => {
@@ -137,7 +140,7 @@ const slice = createSlice({
             .addCase(createTenant.fulfilled, (state, action) => {
                 // Ensure the state.tenants remains an array
                 if (Array.isArray(state.tenants)) {
-                    state.tenants.push(action.payload);
+                    state.tenants.push(action.payload); // The payload is already a Tenant instance
                 } else {
                     state.tenants = [action.payload]; // Reassign as a new array if it's not already an array
                 }
@@ -156,7 +159,7 @@ const slice = createSlice({
             .addCase(updateTenant.fulfilled, (state, action) => {
                 const index = state.tenants.findIndex((tenant) => tenant.id === action.payload.id);
                 if (index !== -1) {
-                    state.tenants[index] = action.payload;
+                    state.tenants[index] = action.payload; // The payload is already a Tenant instance
                 }
                 state.loading = false;
             })

@@ -13,6 +13,7 @@ export class Tenant {
         address = '',
         latitude = '',
         longitude = '',
+        logo_url = '',
         description = '',
         active = false,
         created_by = null,
@@ -29,6 +30,7 @@ export class Tenant {
         this.address = address;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.logo_url = logo_url;
         this.description = description;
         this.active = active;
         this.created_by = created_by;
@@ -53,6 +55,7 @@ export class Tenant {
             address: data.address,
             latitude: data.latitude,
             longitude: data.longitude,
+            logo_url: data.logo_url, // Ensure logo_url is correctly handled
             description: data.description,
             active: data.active,
             created_by: data.created_by,
