@@ -124,7 +124,7 @@ const MainRoutes = {
         },
         {
             path: '/md/org/companies/list',
-            element: <ComingSoon key="md-org-companies" deliveryDate="2024-08-24T23:59:59" />
+            element: <ComingSoon key="md-org-companies" deliveryDate="2024-08-28T23:59:59" />
         },
         {
             path: '/md/org/users/privileges/list',
@@ -140,15 +140,15 @@ const MainRoutes = {
         },
         {
             path: '/md/org/offices/list',
-            element: <ComingSoon key="md-org-offices" deliveryDate="2024-08-25T23:59:59" />
+            element: <ComingSoon key="md-org-offices" deliveryDate="2024-08-28T23:59:59" />
         },
         {
             path: '/md/ext/org/customers/list',
-            element: <ComingSoon key="md-ext-org-customers" deliveryDate="2024-08-26T23:59:59" />
+            element: <ComingSoon key="md-ext-org-customers" deliveryDate="2024-08-28T23:59:59" />
         },
         {
             path: '/md/ext/org/channelpartners/list',
-            element: <ComingSoon key="md-ext-org-channelpartners" deliveryDate="2024-08-27T23:59:59" />
+            element: <ComingSoon key="md-ext-org-channelpartners" deliveryDate="2024-08-28T23:59:59" />
         },
         {
             path: '/md/ext/org/vendors/list',
