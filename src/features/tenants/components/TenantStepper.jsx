@@ -1,5 +1,4 @@
 import React, { useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 import TenantForm from './TenantForm';
 import TenantDetails from './TenantDetails';
 import TenantConfirmation from './TenantConfirmation';
@@ -24,7 +23,6 @@ const TenantStepper = ({ initialTenantData = new Tenant(), isEditMode = false })
     const [errorResponse, setErrorResponse] = useState(null); // Stores any error responses from the API
 
     const { createTenant, updateTenant } = useTenantApi(); // Hooks for API calls
-    const navigate = useNavigate();
 
     /**
      * Handles form submission based on the mode (create or edit).
