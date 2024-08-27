@@ -86,7 +86,11 @@ const AdvancedFilter = ({ onApplyFilters, onClearFilters }) => {
                                     label="Created From"
                                     value={createdFrom}
                                     onChange={(newValue) => setCreatedFrom(newValue)}
-                                    renderInput={(params) => <TextField {...params} fullWidth />}
+                                    slotProps={{
+                                        textField: {
+                                            fullWidth: true
+                                        }
+                                    }}
                                 />
                             </Grid>
 
@@ -96,7 +100,11 @@ const AdvancedFilter = ({ onApplyFilters, onClearFilters }) => {
                                     label="Created To"
                                     value={createdTo}
                                     onChange={(newValue) => setCreatedTo(newValue)}
-                                    renderInput={(params) => <TextField {...params} fullWidth />}
+                                    slotProps={{
+                                        textField: {
+                                            fullWidth: true
+                                        }
+                                    }}
                                 />
                             </Grid>
 
@@ -106,7 +114,11 @@ const AdvancedFilter = ({ onApplyFilters, onClearFilters }) => {
                                     label="Updated From"
                                     value={updatedFrom}
                                     onChange={(newValue) => setUpdatedFrom(newValue)}
-                                    renderInput={(params) => <TextField {...params} fullWidth />}
+                                    slotProps={{
+                                        textField: {
+                                            fullWidth: true
+                                        }
+                                    }}
                                 />
                             </Grid>
 
@@ -116,7 +128,11 @@ const AdvancedFilter = ({ onApplyFilters, onClearFilters }) => {
                                     label="Updated To"
                                     value={updatedTo}
                                     onChange={(newValue) => setUpdatedTo(newValue)}
-                                    renderInput={(params) => <TextField {...params} fullWidth />}
+                                    slotProps={{
+                                        textField: {
+                                            fullWidth: true
+                                        }
+                                    }}
                                 />
                             </Grid>
 
