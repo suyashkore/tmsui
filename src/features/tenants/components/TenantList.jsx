@@ -4,8 +4,8 @@ import { Box } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import MainCard from 'ui-component/cards/MainCard';
 import useTenantApi from '../hooks/useTenantApi';
-import CustomToolbar from '/src/features/common/components/CustomToolbar';
-import ConfirmDialog from '/src/features/common/components/ConfirmDialog';
+import CustomToolbar from 'features/common/components/CustomToolbar';
+import ConfirmDialog from 'features/common/components/ConfirmDialog';
 import AdvancedFilter from 'features/common/components/AdvancedFilter';
 
 const TenantList = () => {
@@ -17,38 +17,36 @@ const TenantList = () => {
     const [selectedRows, setSelectedRows] = useState([]);
     const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 5 });
     const [sortModel, setSortModel] = useState([]);
-    const [filterModel, setFilterModel] = useState({ items: [] });
+    const [filters, setFilters] = useState({});
     const [confirmModal, setConfirmModal] = useState(null);
 
-    // Function to apply filters
-    const applyFilters = (filters) => {
-        setFilterModel({ items: filters });
+    // Function to apply filters from the AdvancedFilter component
+    const applyFilters = (filterValues) => {
+        // Remove null or empty values from filterValues
+        const cleanedFilters = Object.fromEntries(
+            Object.entries(filterValues).filter(([key, value]) => value !== '' && value != null)
+        );
+        setFilters(cleanedFilters);
     };
 
     // Function to clear filters
     const clearFilters = () => {
-        setFilterModel({ items: [] });
+        setFilters({});
     };
 
     useEffect(() => {
         const loadTenants = async () => {
             try {
                 setLoading(true);
-                const filters = filterModel.items.reduce((acc, filterItem) => {
-                    if (filterItem.value) {
-                        acc[filterItem.field] = filterItem.value;
-                    }
-                    return acc;
-                }, {});
-    
+
                 const queryParams = {
                     page: paginationModel.page + 1,
                     per_page: paginationModel.pageSize,
                     sort_by: sortModel[0]?.field || 'updated_at',
                     sort_order: sortModel[0]?.sort || 'desc',
-                    ...filters,
+                    ...filters, // Spread the filter values into the query parameters
                 };
-    
+
                 const { data, total: fetchedTotal } = await fetchTenants(queryParams);
                 setTenants(data);
                 setTotal(fetchedTotal);
@@ -58,9 +56,9 @@ const TenantList = () => {
                 setLoading(false);
             }
         };
-    
+
         loadTenants();
-    }, [paginationModel, sortModel, filterModel, fetchTenants]);
+    }, [paginationModel, sortModel, filters, fetchTenants]);
 
     const columns = [
         { field: 'id', headerName: 'ID', flex: 0.5, minWidth: 70 },
@@ -144,9 +142,9 @@ const TenantList = () => {
     const confirmAction = async () => {
         try {
             if (confirmModal.action === 'deactivate') {
-                const response = await deactivateTenant(confirmModal.id);
+                await deactivateTenant(confirmModal.id);
             } else if (confirmModal.action === 'delete') {
-                const response = await deleteTenant(confirmModal.id);
+                await deleteTenant(confirmModal.id);
             }
             setConfirmModal(null); // Close the modal
             setSelectedRows([]); // Reset selected rows
@@ -208,7 +206,13 @@ const TenantList = () => {
                     paginationModel={paginationModel}
                     onPaginationModelChange={setPaginationModel}
                     onSortModelChange={setSortModel}
-                    onFilterModelChange={(newFilterModel) => setFilterModel(newFilterModel)}
+                    onFilterModelChange={(model) => {
+                        const filterValues = model.items.reduce((acc, item) => {
+                            acc[item.field] = item.value;
+                            return acc;
+                        }, {});
+                        applyFilters(filterValues);
+                    }}
                     checkboxSelection
                     onRowSelectionModelChange={handleRowSelection}
                     slots={{
@@ -231,11 +235,10 @@ const TenantList = () => {
             </Box>
             {confirmModal && (
                 <ConfirmDialog
-                    open={Boolean(confirmModal)}
-                    onClose={handleCloseModal}
-                    onConfirm={confirmAction}
-                    title="Confirmation"
+                    open={!!confirmModal}
                     message={confirmModal.message}
+                    onConfirm={confirmAction}
+                    onClose={handleCloseModal}
                 />
             )}
         </MainCard>
