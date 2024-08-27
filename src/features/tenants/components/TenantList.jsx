@@ -6,6 +6,7 @@ import MainCard from 'ui-component/cards/MainCard';
 import useTenantApi from '../hooks/useTenantApi';
 import CustomToolbar from '/src/features/common/components/CustomToolbar';
 import ConfirmDialog from '/src/features/common/components/ConfirmDialog';
+import AdvancedFilter from 'features/common/components/AdvancedFilter';
 
 const TenantList = () => {
     const navigate = useNavigate();
@@ -18,6 +19,16 @@ const TenantList = () => {
     const [sortModel, setSortModel] = useState([]);
     const [filterModel, setFilterModel] = useState({ items: [] });
     const [confirmModal, setConfirmModal] = useState(null);
+
+    // Function to apply filters
+    const applyFilters = (filters) => {
+        setFilterModel({ items: filters });
+    };
+
+    // Function to clear filters
+    const clearFilters = () => {
+        setFilterModel({ items: [] });
+    };
 
     useEffect(() => {
         const loadTenants = async () => {
@@ -183,6 +194,7 @@ const TenantList = () => {
     return (
         <MainCard content={false}>
             <Box sx={{ width: '100%' }}>
+                <AdvancedFilter onApplyFilters={applyFilters} onClearFilters={clearFilters} />
                 <DataGrid
                     columns={columns}
                     rows={tenants || []}
