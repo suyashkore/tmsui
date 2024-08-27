@@ -10,7 +10,7 @@ import AdvancedFilter from 'features/common/components/AdvancedFilter';
 
 const TenantList = () => {
     const navigate = useNavigate();
-    const { fetchTenants, deactivateTenant, deleteTenant, downloadTenantTemplate, uploadTenantFile } = useTenantApi();
+    const { fetchTenants, deactivateTenant, deleteTenant, downloadTenantTemplate, uploadTenantFile, exportTenants } = useTenantApi();
 
     // State variables for managing tenants data, pagination, sorting, and filters
     const [tenants, setTenants] = useState([]);
@@ -190,7 +190,21 @@ const TenantList = () => {
     };
 
     const handleImport = () => console.log('Import tenants data');
-    const handleExport = () => console.log('Export tenants data');
+    const handleExport = async () => {
+        try {
+            // Gather all current query parameters for export
+            const queryParams = {
+                sort_by: sortModel[0]?.field || 'updated_at',
+                sort_order: sortModel[0]?.sort || 'desc',
+                ...getCombinedFilters(), // Combine column filters and advanced filters
+            };
+    
+            // Call the export function with the current query parameters
+            await exportTenants(queryParams);
+        } catch (error) {
+            console.error('Failed to export tenants:', error);
+        }
+    };    
 
     return (
         <MainCard content={false}>
