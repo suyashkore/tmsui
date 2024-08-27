@@ -1,98 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Box, IconButton, Stack, Tooltip, useMediaQuery, useTheme, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from '@mui/material';
-import { DataGrid, GridToolbarColumnsButton } from '@mui/x-data-grid';
-import { IconPencil, IconTrash, IconBan, IconPlus, IconEye, IconFileTypeXls, IconUpload, IconDownload } from '@tabler/icons-react';
+import { Box } from '@mui/material';
+import { DataGrid } from '@mui/x-data-grid';
 import MainCard from 'ui-component/cards/MainCard';
 import useTenantApi from '../hooks/useTenantApi';
+import CustomToolbar from '/src/features/common/components/CustomToolbar';
+import ConfirmDialog from '/src/features/common/components/ConfirmDialog';
 
-/**
- * CustomToolbar Component
- * - Provides the toolbar for the DataGrid with actions like Create, View, Edit, Deactivate, Delete, etc.
- */
-function CustomToolbar({
-    onView,
-    onEdit,
-    onDeactivate,
-    onDelete,
-    hasSelection,
-    onCreate,
-    onDownloadTemplate,
-    onImport,
-    onExport,
-}) {
-    const theme = useTheme();
-    const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
-
-    return (
-        <Stack
-            direction="row"
-            spacing={1}
-            alignItems="center"
-            justifyContent="flex-start"
-            sx={{
-                flexWrap: isSmallScreen ? 'wrap' : 'nowrap',
-                gap: isSmallScreen ? 2 : 1,
-            }}
-        >
-            <GridToolbarColumnsButton />
-            <Tooltip title="Create New">
-                <IconButton color="primary" onClick={onCreate}>
-                    <IconPlus />
-                </IconButton>
-            </Tooltip>
-            <Tooltip title="View Selected">
-                <span>
-                    <IconButton color="primary" onClick={onView} disabled={!hasSelection}>
-                        <IconEye />
-                    </IconButton>
-                </span>
-            </Tooltip>
-            <Tooltip title="Edit Selected">
-                <span>
-                    <IconButton color="primary" onClick={onEdit} disabled={!hasSelection}>
-                        <IconPencil />
-                    </IconButton>
-                </span>
-            </Tooltip>
-            <Tooltip title="Deactivate Selected">
-                <span>
-                    <IconButton color="secondary" onClick={onDeactivate} disabled={!hasSelection}>
-                        <IconBan />
-                    </IconButton>
-                </span>
-            </Tooltip>
-            <Tooltip title="Delete Selected">
-                <span>
-                    <IconButton color="error" onClick={onDelete} disabled={!hasSelection}>
-                        <IconTrash />
-                    </IconButton>
-                </span>
-            </Tooltip>
-            <Tooltip title="Download Template">
-                <IconButton color="primary" onClick={onDownloadTemplate}>
-                    <IconFileTypeXls />
-                </IconButton>
-            </Tooltip>
-            <Tooltip title="Import">
-                <IconButton color="primary" onClick={onImport}>
-                    <IconUpload />
-                </IconButton>
-            </Tooltip>
-            <Tooltip title="Export">
-                <IconButton color="primary" onClick={onExport}>
-                    <IconDownload />
-                </IconButton>
-            </Tooltip>
-        </Stack>
-    );
-}
-
-/**
- * TenantList Component
- * - Displays a list of tenants with server-side pagination, sorting, and filtering.
- * - Provides actions like viewing, editing, deactivating, deleting, and managing tenant files.
- */
 const TenantList = () => {
     const navigate = useNavigate();
     const { fetchTenants, deactivateTenant, deleteTenant, downloadTenantTemplate, uploadTenantFile } = useTenantApi();
@@ -103,30 +17,25 @@ const TenantList = () => {
     const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 5 });
     const [sortModel, setSortModel] = useState([]);
     const [filterModel, setFilterModel] = useState({ items: [] });
-    const [confirmModal, setConfirmModal] = useState(null); // To control the confirmation dialog
-    const theme = useTheme();
-    const isMediumScreen = useMediaQuery(theme.breakpoints.down('md'));
+    const [confirmModal, setConfirmModal] = useState(null);
 
-    // Fetch tenants whenever pagination, sorting, or filter parameters change
     useEffect(() => {
         const loadTenants = async () => {
             try {
                 setLoading(true);
-    
-                // Convert filter model to flat query parameters
                 const filters = filterModel.items.reduce((acc, filterItem) => {
                     if (filterItem.value) {
-                        acc[filterItem.field] = filterItem.value; // Directly map field to value
+                        acc[filterItem.field] = filterItem.value;
                     }
                     return acc;
                 }, {});
     
                 const queryParams = {
-                    page: paginationModel.page + 1, // Backend expects 1-based page index
+                    page: paginationModel.page + 1,
                     per_page: paginationModel.pageSize,
                     sort_by: sortModel[0]?.field || 'updated_at',
                     sort_order: sortModel[0]?.sort || 'desc',
-                    ...filters, // Spread the flattened filters into query parameters
+                    ...filters,
                 };
     
                 const { data, total: fetchedTotal } = await fetchTenants(queryParams);
@@ -141,7 +50,7 @@ const TenantList = () => {
     
         loadTenants();
     }, [paginationModel, sortModel, filterModel, fetchTenants]);
-    
+
     const columns = [
         { field: 'id', headerName: 'ID', flex: 0.5, minWidth: 70 },
         { field: 'name', headerName: 'Name', flex: 1, minWidth: 150 },
@@ -202,7 +111,7 @@ const TenantList = () => {
             setConfirmModal({
                 action: 'deactivate',
                 id: selectedRows[0],
-                message: `Are you sure you want to deactivate the tenant with ID: ${selectedRows[0]}?`,
+                message: `Are you sure you want to deactivate the tenant with ID ${selectedRows[0]}?`,
             });
         } else {
             console.warn('Please select a single row to deactivate.');
@@ -214,7 +123,7 @@ const TenantList = () => {
             setConfirmModal({
                 action: 'delete',
                 id: selectedRows[0],
-                message: `Are you sure you want to delete the tenant with ID: ${selectedRows[0]}? This action cannot be undone.`,
+                message: `Are you sure you want to delete the tenant with ID ${selectedRows[0]}? This action cannot be undone.`,
             });
         } else {
             console.warn('Please select a single row to delete.');
@@ -308,38 +217,16 @@ const TenantList = () => {
                             onExport: handleExport,
                         },
                     }}
-                    sx={{
-                        '& .MuiDataGrid-root': {
-                            '& .MuiDataGrid-toolbarContainer': {
-                                padding: isMediumScreen ? '8px' : '16px',
-                            },
-                        },
-                    }}
                 />
             </Box>
-            {/* Confirmation Modal */}
             {confirmModal && (
-                <Dialog
+                <ConfirmDialog
                     open={Boolean(confirmModal)}
                     onClose={handleCloseModal}
-                    aria-labelledby="alert-dialog-title"
-                    aria-describedby="alert-dialog-description"
-                >
-                    <DialogTitle id="alert-dialog-title">Confirmation</DialogTitle>
-                    <DialogContent>
-                        <DialogContentText id="alert-dialog-description">
-                            {confirmModal.message}
-                        </DialogContentText>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={handleCloseModal} color="primary">
-                            Cancel
-                        </Button>
-                        <Button onClick={confirmAction} color="secondary" autoFocus>
-                            Confirm
-                        </Button>
-                    </DialogActions>
-                </Dialog>
+                    onConfirm={confirmAction}
+                    title="Confirmation"
+                    message={confirmModal.message}
+                />
             )}
         </MainCard>
     );

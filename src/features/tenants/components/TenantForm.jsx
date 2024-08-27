@@ -83,7 +83,7 @@ const TenantForm = ({ tenantData, setTenantData, handleNext, handleSubmit, isEdi
                         fullWidth
                         name="name"
                         label="Name"
-                        value={formik.values.name}
+                        value={formik.values.name || ''}
                         onChange={formik.handleChange}
                         error={formik.touched.name && Boolean(formik.errors.name)}
                         helperText={formik.touched.name && formik.errors.name}
@@ -96,7 +96,7 @@ const TenantForm = ({ tenantData, setTenantData, handleNext, handleSubmit, isEdi
                         fullWidth
                         name="country"
                         label="Country"
-                        value={formik.values.country}
+                        value={formik.values.country || ''}
                         onChange={formik.handleChange}
                         error={formik.touched.country && Boolean(formik.errors.country)}
                         helperText={formik.touched.country && formik.errors.country}
@@ -109,7 +109,7 @@ const TenantForm = ({ tenantData, setTenantData, handleNext, handleSubmit, isEdi
                         fullWidth
                         name="state"
                         label="State"
-                        value={formik.values.state}
+                        value={formik.values.state || ''}
                         onChange={formik.handleChange}
                         error={formik.touched.state && Boolean(formik.errors.state)}
                         helperText={formik.touched.state && formik.errors.state}
@@ -122,7 +122,7 @@ const TenantForm = ({ tenantData, setTenantData, handleNext, handleSubmit, isEdi
                         fullWidth
                         name="city"
                         label="City"
-                        value={formik.values.city}
+                        value={formik.values.city || ''}
                         onChange={formik.handleChange}
                         error={formik.touched.city && Boolean(formik.errors.city)}
                         helperText={formik.touched.city && formik.errors.city}
@@ -135,7 +135,7 @@ const TenantForm = ({ tenantData, setTenantData, handleNext, handleSubmit, isEdi
                         fullWidth
                         name="pincode"
                         label="Pincode"
-                        value={formik.values.pincode}
+                        value={formik.values.pincode || ''}
                         onChange={formik.handleChange}
                         error={formik.touched.pincode && Boolean(formik.errors.pincode)}
                         helperText={formik.touched.pincode && formik.errors.pincode}
@@ -148,7 +148,7 @@ const TenantForm = ({ tenantData, setTenantData, handleNext, handleSubmit, isEdi
                         fullWidth
                         name="address"
                         label="Address"
-                        value={formik.values.address}
+                        value={formik.values.address || ''}
                         onChange={formik.handleChange}
                         error={formik.touched.address && Boolean(formik.errors.address)}
                         helperText={formik.touched.address && formik.errors.address}
@@ -161,7 +161,7 @@ const TenantForm = ({ tenantData, setTenantData, handleNext, handleSubmit, isEdi
                         fullWidth
                         name="latitude"
                         label="Latitude"
-                        value={formik.values.latitude}
+                        value={formik.values.latitude || ''}
                         onChange={formik.handleChange}
                         error={formik.touched.latitude && Boolean(formik.errors.latitude)}
                         helperText={formik.touched.latitude && formik.errors.latitude}
@@ -174,7 +174,7 @@ const TenantForm = ({ tenantData, setTenantData, handleNext, handleSubmit, isEdi
                         fullWidth
                         name="longitude"
                         label="Longitude"
-                        value={formik.values.longitude}
+                        value={formik.values.longitude || ''}
                         onChange={formik.handleChange}
                         error={formik.touched.longitude && Boolean(formik.errors.longitude)}
                         helperText={formik.touched.longitude && formik.errors.longitude}
@@ -189,7 +189,7 @@ const TenantForm = ({ tenantData, setTenantData, handleNext, handleSubmit, isEdi
                         label="Description"
                         multiline
                         rows={4}
-                        value={formik.values.description}
+                        value={formik.values.description || ''}
                         onChange={formik.handleChange}
                         error={formik.touched.description && Boolean(formik.errors.description)}
                         helperText={formik.touched.description && formik.errors.description}
@@ -201,7 +201,7 @@ const TenantForm = ({ tenantData, setTenantData, handleNext, handleSubmit, isEdi
                     <FormControlLabel
                         control={
                             <Checkbox
-                                checked={formik.values.active}
+                                checked={formik.values.active ?? false}
                                 onChange={(event) => formik.setFieldValue('active', event.target.checked)}
                             />
                         }
@@ -217,7 +217,7 @@ const TenantForm = ({ tenantData, setTenantData, handleNext, handleSubmit, isEdi
                                 fullWidth
                                 name="id"
                                 label="ID"
-                                value={formik.values.id}
+                                value={formik.values.id || ''}
                                 InputProps={{ readOnly: true }}
                                 disabled
                             />
@@ -228,7 +228,7 @@ const TenantForm = ({ tenantData, setTenantData, handleNext, handleSubmit, isEdi
                                 fullWidth
                                 name="created_by"
                                 label="Created By"
-                                value={formik.values.created_by}
+                                value={formik.values.created_by || ''}
                                 InputProps={{ readOnly: true }}
                                 disabled
                             />
@@ -239,7 +239,7 @@ const TenantForm = ({ tenantData, setTenantData, handleNext, handleSubmit, isEdi
                                 fullWidth
                                 name="updated_by"
                                 label="Updated By"
-                                value={formik.values.updated_by}
+                                value={formik.values.updated_by || ''}
                                 InputProps={{ readOnly: true }}
                                 disabled
                             />
@@ -250,7 +250,7 @@ const TenantForm = ({ tenantData, setTenantData, handleNext, handleSubmit, isEdi
                                 fullWidth
                                 name="created_at"
                                 label="Created At"
-                                value={format(new Date(formik.values.created_at), 'dd MMM yyyy, hh:mm a')}
+                                value={formik.values.created_at ? format(new Date(formik.values.created_at), 'dd MMM yyyy, hh:mm a') : ''}
                                 InputProps={{ readOnly: true }}
                                 disabled
                             />
@@ -261,7 +261,7 @@ const TenantForm = ({ tenantData, setTenantData, handleNext, handleSubmit, isEdi
                                 fullWidth
                                 name="updated_at"
                                 label="Updated At"
-                                value={format(new Date(formik.values.updated_at), 'dd MMM yyyy, hh:mm a')}
+                                value={formik.values.created_at ? format(new Date(formik.values.updated_at), 'dd MMM yyyy, hh:mm a') : ''}
                                 InputProps={{ readOnly: true }}
                                 disabled
                             />
