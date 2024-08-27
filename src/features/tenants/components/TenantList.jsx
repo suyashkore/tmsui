@@ -11,42 +11,62 @@ import AdvancedFilter from 'features/common/components/AdvancedFilter';
 const TenantList = () => {
     const navigate = useNavigate();
     const { fetchTenants, deactivateTenant, deleteTenant, downloadTenantTemplate, uploadTenantFile } = useTenantApi();
+
+    // State variables for managing tenants data, pagination, sorting, and filters
     const [tenants, setTenants] = useState([]);
     const [total, setTotal] = useState(0);
     const [loading, setLoading] = useState(false);
     const [selectedRows, setSelectedRows] = useState([]);
     const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 5 });
     const [sortModel, setSortModel] = useState([]);
-    const [filters, setFilters] = useState({});
+    const [columnFilters, setColumnFilters] = useState({});
+    const [advancedFilters, setAdvancedFilters] = useState({});
     const [confirmModal, setConfirmModal] = useState(null);
 
-    // Function to apply filters from the AdvancedFilter component
-    const applyFilters = (filterValues) => {
-        // Remove null or empty values from filterValues
+    /**
+     * Function to apply filters from the AdvancedFilter component.
+     * @param {Object} filterValues - The filter values from the AdvancedFilter component.
+     */
+    const applyAdvancedFilters = (filterValues) => {
         const cleanedFilters = Object.fromEntries(
             Object.entries(filterValues).filter(([key, value]) => value !== '' && value != null)
         );
-        setFilters(cleanedFilters);
+        setAdvancedFilters(cleanedFilters);
     };
 
-    // Function to clear filters
-    const clearFilters = () => {
-        setFilters({});
+    /**
+     * Function to clear advanced filters.
+     */
+    const clearAdvancedFilters = () => {
+        setAdvancedFilters({});
     };
 
+    /**
+     * Function to combine column filters and advanced filters for the API query.
+     * @returns {Object} - The combined filters.
+     */
+    const getCombinedFilters = () => {
+        return { ...columnFilters, ...advancedFilters };
+    };
+
+    /**
+     * Function to load tenants based on pagination, sorting, and filters.
+     */
     useEffect(() => {
         const loadTenants = async () => {
             try {
                 setLoading(true);
 
+                // Prepare query parameters by combining pagination, sorting, and filters
                 const queryParams = {
                     page: paginationModel.page + 1,
                     per_page: paginationModel.pageSize,
                     sort_by: sortModel[0]?.field || 'updated_at',
                     sort_order: sortModel[0]?.sort || 'desc',
-                    ...filters, // Spread the filter values into the query parameters
+                    ...getCombinedFilters(), // Combine both column filters and advanced filters
                 };
 
+                // Fetch tenants based on the query parameters
                 const { data, total: fetchedTotal } = await fetchTenants(queryParams);
                 setTenants(data);
                 setTotal(fetchedTotal);
@@ -58,8 +78,23 @@ const TenantList = () => {
         };
 
         loadTenants();
-    }, [paginationModel, sortModel, filters, fetchTenants]);
+    }, [paginationModel, sortModel, columnFilters, advancedFilters, fetchTenants]);
 
+    /**
+     * Function to handle changes in column filters from the DataGrid component.
+     * @param {Object} model - The filter model from DataGrid.
+     */
+    const handleColumnFilterChange = (model) => {
+        const filterValues = model.items.reduce((acc, item) => {
+            if (item.value !== null && item.value !== '') {
+                acc[item.field] = item.value;
+            }
+            return acc;
+        }, {});
+        setColumnFilters(filterValues);
+    };
+
+    // Define the columns for the DataGrid
     const columns = [
         { field: 'id', headerName: 'ID', flex: 0.5, minWidth: 70 },
         { field: 'name', headerName: 'Name', flex: 1, minWidth: 150 },
@@ -87,34 +122,18 @@ const TenantList = () => {
         { field: 'created_by', headerName: 'Created By', flex: 0.8, minWidth: 70 },
         { field: 'updated_by', headerName: 'Updated By', flex: 0.8, minWidth: 70 },
         { field: 'created_at', headerName: 'Created At', flex: 1, minWidth: 180 },
-        { field: 'updated_at', headerName: 'Updated At', flex: 1, minWidth: 180 },
+        { field: 'updated_at', headerName: 'Updated At', flex: 1, minWidth: 180 }
     ];
 
-    // Handle row selection
-    const handleRowSelection = (selection) => {
-        setSelectedRows(selection);
-    };
+    // Handle row selection for various actions like view, edit, delete
+    const handleRowSelection = (selection) => setSelectedRows(selection);
 
-    const handleCreate = () => {
-        navigate('/md/org/tenants/create');
-    };
+    // Navigation handlers for create, view, edit actions
+    const handleCreate = () => navigate('/md/org/tenants/create');
+    const handleView = () => selectedRows.length === 1 && navigate(`/md/org/tenants/view/id/${selectedRows[0]}`);
+    const handleEdit = () => selectedRows.length === 1 && navigate(`/md/org/tenants/edit/id/${selectedRows[0]}`);
 
-    const handleView = () => {
-        if (selectedRows.length === 1) {
-            navigate(`/md/org/tenants/view/id/${selectedRows[0]}`);
-        } else {
-            console.warn('Please select a single row to view.');
-        }
-    };
-
-    const handleEdit = () => {
-        if (selectedRows.length === 1) {
-            navigate(`/md/org/tenants/edit/id/${selectedRows[0]}`);
-        } else {
-            console.warn('Please select a single row to edit.');
-        }
-    };
-
+    // Handlers for deactivation and deletion with confirmation dialogs
     const handleDeactivate = () => {
         if (selectedRows.length === 1) {
             setConfirmModal({
@@ -122,8 +141,6 @@ const TenantList = () => {
                 id: selectedRows[0],
                 message: `Are you sure you want to deactivate the tenant with ID ${selectedRows[0]}?`,
             });
-        } else {
-            console.warn('Please select a single row to deactivate.');
         }
     };
 
@@ -134,11 +151,10 @@ const TenantList = () => {
                 id: selectedRows[0],
                 message: `Are you sure you want to delete the tenant with ID ${selectedRows[0]}? This action cannot be undone.`,
             });
-        } else {
-            console.warn('Please select a single row to delete.');
         }
     };
 
+    // Confirm and execute the action (deactivate or delete)
     const confirmAction = async () => {
         try {
             if (confirmModal.action === 'deactivate') {
@@ -162,17 +178,16 @@ const TenantList = () => {
         }
     };
 
-    const handleCloseModal = () => {
-        setConfirmModal(null);
-    };
+    const handleCloseModal = () => setConfirmModal(null);
 
+    // Handlers for downloading, importing, and exporting tenant data
     const handleDownloadTemplate = async () => {
         try {
             const response = await downloadTenantTemplate();
             const url = window.URL.createObjectURL(new Blob([response]));
             const link = document.createElement('a');
             link.href = url;
-            link.setAttribute('download', 'tenant_template.xlsx'); // Use a specific file name
+            link.setAttribute('download', 'tenant_template.xlsx');
             document.body.appendChild(link);
             link.click();
             link.remove();
@@ -181,18 +196,16 @@ const TenantList = () => {
         }
     };
 
-    const handleImport = async () => {
-        console.log('Import tenants data');
-    };
-
-    const handleExport = async () => {
-        console.log('Export tenants data');
-    };
+    const handleImport = () => console.log('Import tenants data');
+    const handleExport = () => console.log('Export tenants data');
 
     return (
         <MainCard content={false}>
             <Box sx={{ width: '100%' }}>
-                <AdvancedFilter onApplyFilters={applyFilters} onClearFilters={clearFilters} />
+                {/* Advanced Filter component */}
+                <AdvancedFilter onApplyFilters={applyAdvancedFilters} onClearFilters={clearAdvancedFilters} />
+                
+                {/* DataGrid component for tenant list */}
                 <DataGrid
                     columns={columns}
                     rows={tenants || []}
@@ -206,18 +219,10 @@ const TenantList = () => {
                     paginationModel={paginationModel}
                     onPaginationModelChange={setPaginationModel}
                     onSortModelChange={setSortModel}
-                    onFilterModelChange={(model) => {
-                        const filterValues = model.items.reduce((acc, item) => {
-                            acc[item.field] = item.value;
-                            return acc;
-                        }, {});
-                        applyFilters(filterValues);
-                    }}
+                    onFilterModelChange={handleColumnFilterChange} // Handle column filter changes
                     checkboxSelection
                     onRowSelectionModelChange={handleRowSelection}
-                    slots={{
-                        toolbar: CustomToolbar,
-                    }}
+                    slots={{ toolbar: CustomToolbar }}
                     slotProps={{
                         toolbar: {
                             onView: handleView,
@@ -233,6 +238,8 @@ const TenantList = () => {
                     }}
                 />
             </Box>
+
+            {/* Confirmation Dialog for actions */}
             {confirmModal && (
                 <ConfirmDialog
                     open={!!confirmModal}
