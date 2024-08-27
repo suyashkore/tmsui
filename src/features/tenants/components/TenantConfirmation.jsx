@@ -1,35 +1,37 @@
+// tmsui/src/features/tenants/components/TenantConfirmation.jsx
+
 import React from 'react';
 import { Grid, Typography, Box, Alert, Stack, Button, List, ListItem, ListItemText } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import TenantDetails from './TenantDetails';
 import AnimateButton from 'ui-component/extended/AnimateButton';
-import ApiErrorResponse from '../../common/models/ApiErrorResponse';
+import ApiErrorResponse from 'features/common/models/ApiErrorResponse';
 
 /**
  * TenantConfirmation Component
- * - This component displays the confirmation step after the tenant creation API call.
- * - It shows either a success or error message and, in the case of success, details of the created tenant.
- *
+ * - This component displays the confirmation step after tenant creation or update.
+ * - It shows either a success or error message and, in the case of success, displays the details of the tenant.
+ * 
  * @param {string} message - The message returned from the API call (success or error).
  * @param {boolean} apiSuccess - Indicates whether the API call was successful.
- * @param {Object} tenantData - The data of the newly created tenant.
+ * @param {Object} tenantData - The data of the created or updated tenant.
  * @param {ApiErrorResponse} errorResponse - The error response object containing field-specific errors.
- * @returns {JSX.Element} A confirmation screen displaying the result of the tenant creation process.
+ * @returns {JSX.Element} A confirmation screen displaying the result of the tenant creation or update process.
  */
 const TenantConfirmation = ({ message, apiSuccess, tenantData, errorResponse }) => {
-    const navigate = useNavigate(); // Initialize the navigation function
+    const navigate = useNavigate(); // Navigation function to redirect the user
 
     // Extract field-specific errors from the error response, if available
     const fieldErrors = errorResponse?.errors || null;
 
     return (
         <Box>
-            {/* Show the success or error message */}
+            {/* Display the success or error message */}
             <Alert severity={apiSuccess ? 'success' : 'error'} sx={{ mb: 3 }}>
                 {message}
             </Alert>
 
-            {/* Show detailed field errors if available */}
+            {/* Display detailed field errors if available */}
             {!apiSuccess && fieldErrors && Object.keys(fieldErrors).length > 0 && (
                 <Box sx={{ mb: 3 }}>
                     <Typography variant="h6" gutterBottom>
@@ -39,7 +41,7 @@ const TenantConfirmation = ({ message, apiSuccess, tenantData, errorResponse }) 
                         {Object.entries(fieldErrors).map(([field, errors]) => (
                             <ListItem key={field} disablePadding>
                                 <ListItemText
-                                    primary={field.charAt(0).toUpperCase() + field.slice(1)} // Capitalize field name
+                                    primary={field.charAt(0).toUpperCase() + field.slice(1)} // Capitalize the field name
                                     secondary={errors.join(', ')} // Join multiple errors for the field
                                 />
                             </ListItem>
@@ -48,10 +50,10 @@ const TenantConfirmation = ({ message, apiSuccess, tenantData, errorResponse }) 
                 </Box>
             )}
 
-            {/* Display the tenant details if the API call was successful */}
+            {/* Display tenant details if the API call was successful */}
             {apiSuccess && (
                 <Grid container spacing={2} sx={{ mb: 3 }}>
-                    <TenantDetails tenant={tenantData} mode="show" />
+                    <TenantDetails tenant={tenantData} mode="view" /> {/* Use the view mode for TenantDetails */}
                 </Grid>
             )}
 
@@ -59,7 +61,7 @@ const TenantConfirmation = ({ message, apiSuccess, tenantData, errorResponse }) 
             <Stack direction="row" justifyContent="flex-end" sx={{ mt: 3 }}>
                 <AnimateButton>
                     <Button
-                        onClick={() => navigate('/md/org/tenants/list')}
+                        onClick={() => navigate('/md/org/tenants/list')} // Navigate back to the tenant list
                         variant="contained"
                         color="primary"
                     >

@@ -1,85 +1,99 @@
-import React, { useState } from 'react';
-import { Stepper, Step, StepLabel, Box } from '@mui/material';
+import React, { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import TenantForm from './TenantForm';
 import TenantDetails from './TenantDetails';
 import TenantConfirmation from './TenantConfirmation';
-import { useDispatch } from 'store';
-import { createTenant } from 'store/slices/tenant';
+import useTenantApi from '../hooks/useTenantApi';
 import { Tenant } from '../models/TenantModel';
-import ApiErrorResponse from '../../common/models/ApiErrorResponse';
+import { Typography } from '@mui/material';
 
 /**
- * StepperTenant Component
- * - This component manages the multi-step wizard flow for tenant creation.
- * - Steps include data entry, preview, and confirmation.
+ * TenantStepper Component
+ * - Manages the multi-step process for creating or editing a tenant.
+ * - Handles the flow of steps, form submission, and API calls.
+ * 
+ * @param {Tenant} initialTenantData - Initial tenant data for edit mode.
+ * @param {boolean} isEditMode - Indicates whether the form is in edit or create mode.
+ * @returns {JSX.Element} The rendered TenantStepper component.
  */
-const TenantStepper = () => {
-    const [activeStep, setActiveStep] = useState(0); // Track the current active step
-    const [tenantData, setTenantData] = useState(new Tenant()); // Store tenant data
-    const [responseMessage, setResponseMessage] = useState(''); // Store API response messages
-    const [apiSuccess, setApiSuccess] = useState(null); // Track the success/failure of the API call
-    const [errorResponse, setErrorResponse] = useState(null); // Store error responses from the API
+const TenantStepper = ({ initialTenantData = new Tenant(), isEditMode = false }) => {
+    const [activeStep, setActiveStep] = useState(0); // Tracks the current step in the stepper
+    const [tenantData, setTenantData] = useState(initialTenantData); // Stores the tenant data being created or edited
+    const [responseMessage, setResponseMessage] = useState(''); // Stores the API response message for display
+    const [apiSuccess, setApiSuccess] = useState(null); // Tracks the success or failure of the API call
+    const [errorResponse, setErrorResponse] = useState(null); // Stores any error responses from the API
 
-    const dispatch = useDispatch();
+    const { createTenant, updateTenant } = useTenantApi(); // Hooks for API calls
+    const navigate = useNavigate();
 
     /**
-     * Proceed to the next step in the wizard.
+     * Handles form submission based on the mode (create or edit).
+     */
+    const handleFormSubmit = async () => {
+        try {
+            console.log('Submitting the form...');
+            let result;
+            if (isEditMode) {
+                console.log('Edit Mode: Updating Tenant');
+                result = await updateTenant(tenantData.id, tenantData);
+            } else {
+                console.log('Create Mode: Creating New Tenant');
+                result = await createTenant(tenantData);
+            }
+
+            const savedTenant = Tenant.fromApiResponse(result);
+            setTenantData(savedTenant);
+            setApiSuccess(true);
+            setResponseMessage(`Successfully ${isEditMode ? 'updated' : 'created'} Tenant with ID: ${savedTenant.id}`);
+            setErrorResponse(null);
+
+            console.log('Tenant Saved Successfully:', savedTenant);
+            handleNext(); // Move to the confirmation step
+        } catch (error) {
+            setApiSuccess(false);
+            setResponseMessage(error.message);
+            setErrorResponse(error);
+            handleNext(); // Move to the confirmation step even on failure
+        }
+    };
+
+    /**
+     * Advances to the next step in the stepper.
      */
     const handleNext = () => {
         setActiveStep((prevStep) => prevStep + 1);
     };
 
     /**
-     * Go back to the previous step in the wizard.
+     * Goes back to the previous step in the stepper.
      */
     const handleBack = () => {
         setActiveStep((prevStep) => prevStep - 1);
     };
 
     /**
-     * Submit the tenant data to the backend API.
+     * Determines which content to render based on the current step.
      */
-    const handleSubmit = async () => {
-        try {
-            // Dispatch the createTenant action and handle the response
-            const result = await dispatch(createTenant(tenantData)).unwrap();
-            const createdTenant = Tenant.fromApiResponse(result); // Parse the response into the Tenant model
-            setTenantData(createdTenant);
-            setApiSuccess(true);
-            setResponseMessage(`Successfully created Tenant with ID: ${createdTenant.id}`);
-            setErrorResponse(null); // Clear any previous errors
-            handleNext(); // Move to the confirmation step
-        } catch (error) {
-            setApiSuccess(false);
-            setResponseMessage(error.message); // Set the error message from the response
-            setErrorResponse(error); // Store the error response for detailed error display
-            handleNext(); // Move to the confirmation step even on failure
-        }
-    };
-
-    /**
-     * Render the content for each step in the wizard.
-     * @param {number} step - The current step index.
-     * @returns {JSX.Element} - The content to display for the current step.
-     */
-    const getStepContent = (step) => {
-        switch (step) {
+    const stepContent = useMemo(() => {
+        console.log(`Rendering content for step: ${activeStep}`);
+        switch (activeStep) {
             case 0:
                 return (
                     <TenantForm
                         tenantData={tenantData}
                         setTenantData={setTenantData}
                         handleNext={handleNext}
-                        handleSubmit={handleSubmit}
+                        handleSubmit={handleFormSubmit}
+                        isEditMode={isEditMode}
                     />
                 );
             case 1:
                 return (
                     <TenantDetails
                         tenant={tenantData}
-                        mode="preview"
+                        mode={isEditMode ? 'edit' : 'create'}
                         handleBack={handleBack}
-                        handleSubmit={handleSubmit}
+                        handleSubmit={handleFormSubmit}
                     />
                 );
             case 2:
@@ -92,24 +106,11 @@ const TenantStepper = () => {
                     />
                 );
             default:
-                return 'Unknown step';
+                return <Typography variant="body1">Unknown step</Typography>;
         }
-    };
+    }, [activeStep, tenantData, apiSuccess, responseMessage, errorResponse, isEditMode]);
 
-    return (
-        <Box sx={{ width: '100%' }}>
-            {/* Stepper UI to show progress through the steps */}
-            <Stepper activeStep={activeStep} sx={{ mb: 3 }}>
-                {['Data', 'Preview', 'Status'].map((label) => (
-                    <Step key={label}>
-                        <StepLabel>{label}</StepLabel>
-                    </Step>
-                ))}
-            </Stepper>
-            {/* Render the content based on the current active step */}
-            <Box>{getStepContent(activeStep)}</Box>
-        </Box>
-    );
+    return <div>{stepContent}</div>;
 };
 
 export default TenantStepper;

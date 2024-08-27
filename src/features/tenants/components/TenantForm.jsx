@@ -1,60 +1,62 @@
-// tmsui/src/features/tenants/components/TenantForm.jsx
-
 import React from 'react';
 import { Grid, TextField, Checkbox, FormControlLabel, Button, Stack } from '@mui/material';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate for navigation
-
-// project imports
+import { useNavigate } from 'react-router-dom';
+import { format } from 'date-fns';
 import AnimateButton from 'ui-component/extended/AnimateButton';
 
-// Validation schema using Yup
-const validationSchema = Yup.object({
-    name: Yup.string().required('Name is required'),
-    country: Yup.string().required('Country is required'),
-    state: Yup.string().required('State is required'),
-    city: Yup.string().required('City is required'),
-    pincode: Yup.string().required('Pincode is required').matches(/^\d{6}$/, 'Pincode must be 6 digits'),
-    address: Yup.string().required('Address is required'),
-    latitude: Yup.string()
-        .required('Latitude is required')
-        .test(
-            'is-decimal',
-            'Latitude must be a decimal number with at least 4 digits after the decimal',
-            (value) => {
-                return /^-?\d+(\.\d{4,})$/.test(value);
-            }
-        ),
-    longitude: Yup.string()
-        .required('Longitude is required')
-        .test(
-            'is-decimal',
-            'Longitude must be a decimal number with at least 4 digits after the decimal',
-            (value) => {
-                return /^-?\d+(\.\d{4,})$/.test(value);
-            }
-        ),
-    description: Yup.string()
-});
+/**
+ * TenantForm Component
+ * - Handles the form for both creating and editing tenants.
+ * - Utilizes Formik for form state management and validation.
+ *
+ * @param {Object} tenantData - The current tenant data to be displayed in the form.
+ * @param {Function} setTenantData - Function to update the tenant data state.
+ * @param {Function} handleNext - Function to proceed to the next step in the form wizard.
+ * @param {Function} handleSubmit - Function to handle the submission of the form.
+ * @param {Boolean} isEditMode - Determines if the form is in edit mode or create mode.
+ * @returns {JSX.Element} The rendered TenantForm component.
+ */
+const TenantForm = ({ tenantData, setTenantData, handleNext, handleSubmit, isEditMode }) => {
+    const navigate = useNavigate();
 
-const TenantForm = ({ tenantData, setTenantData, handleNext, handleSubmit }) => {
-    const navigate = useNavigate(); // Initialize navigate function for redirection
+    // Validation schema for the form using Yup
+    const validationSchema = Yup.object({
+        name: Yup.string().required('Name is required'),
+        country: Yup.string().required('Country is required'),
+        state: Yup.string().required('State is required'),
+        city: Yup.string().required('City is required'),
+        pincode: Yup.string().required('Pincode is required').matches(/^\d{6}$/, 'Pincode must be 6 digits'),
+        address: Yup.string().required('Address is required'),
+        latitude: Yup.string()
+            .required('Latitude is required')
+            .matches(/^-?\d+(\.\d{4,})$/, 'Latitude must be a decimal with at least 4 digits after the decimal'),
+        longitude: Yup.string()
+            .required('Longitude is required')
+            .matches(/^-?\d+(\.\d{4,})$/, 'Longitude must be a decimal with at least 4 digits after the decimal'),
+        description: Yup.string().nullable()
+    });
 
+    // Initialize Formik for managing form state and validation
     const formik = useFormik({
         initialValues: tenantData,
         validationSchema,
         onSubmit: (values) => {
             setTenantData(values);
-            handleSubmit();
-        }
+            handleSubmit(); // Call the handleSubmit function provided as a prop
+        },
     });
 
+    /**
+     * Handle the preview action before submission.
+     * - Validates the form before proceeding to the preview step.
+     */
     const handlePreview = async () => {
         const isValid = await formik.validateForm();
         if (Object.keys(isValid).length === 0) {
             setTenantData(formik.values);
-            handleNext(); // Move to the Preview step if validation is successful
+            handleNext(); // Move to the preview step if validation is successful
         } else {
             formik.setTouched({
                 name: true,
@@ -73,7 +75,7 @@ const TenantForm = ({ tenantData, setTenantData, handleNext, handleSubmit }) => 
     return (
         <form onSubmit={formik.handleSubmit}>
             <Grid container spacing={2}>
-                {/* Name */}
+                {/* Name Field */}
                 <Grid item xs={12} sm={6} md={3}>
                     <TextField
                         fullWidth
@@ -86,7 +88,7 @@ const TenantForm = ({ tenantData, setTenantData, handleNext, handleSubmit }) => 
                     />
                 </Grid>
 
-                {/* Country */}
+                {/* Country Field */}
                 <Grid item xs={12} sm={6} md={3}>
                     <TextField
                         fullWidth
@@ -99,7 +101,7 @@ const TenantForm = ({ tenantData, setTenantData, handleNext, handleSubmit }) => 
                     />
                 </Grid>
 
-                {/* State */}
+                {/* State Field */}
                 <Grid item xs={12} sm={6} md={3}>
                     <TextField
                         fullWidth
@@ -112,7 +114,7 @@ const TenantForm = ({ tenantData, setTenantData, handleNext, handleSubmit }) => 
                     />
                 </Grid>
 
-                {/* City */}
+                {/* City Field */}
                 <Grid item xs={12} sm={6} md={3}>
                     <TextField
                         fullWidth
@@ -125,7 +127,7 @@ const TenantForm = ({ tenantData, setTenantData, handleNext, handleSubmit }) => 
                     />
                 </Grid>
 
-                {/* Pincode */}
+                {/* Pincode Field */}
                 <Grid item xs={12} sm={6} md={3}>
                     <TextField
                         fullWidth
@@ -138,7 +140,7 @@ const TenantForm = ({ tenantData, setTenantData, handleNext, handleSubmit }) => 
                     />
                 </Grid>
 
-                {/* Address */}
+                {/* Address Field */}
                 <Grid item xs={12} sm={6} md={3}>
                     <TextField
                         fullWidth
@@ -151,7 +153,7 @@ const TenantForm = ({ tenantData, setTenantData, handleNext, handleSubmit }) => 
                     />
                 </Grid>
 
-                {/* Latitude */}
+                {/* Latitude Field */}
                 <Grid item xs={12} sm={6} md={3}>
                     <TextField
                         fullWidth
@@ -164,7 +166,7 @@ const TenantForm = ({ tenantData, setTenantData, handleNext, handleSubmit }) => 
                     />
                 </Grid>
 
-                {/* Longitude */}
+                {/* Longitude Field */}
                 <Grid item xs={12} sm={6} md={3}>
                     <TextField
                         fullWidth
@@ -177,7 +179,7 @@ const TenantForm = ({ tenantData, setTenantData, handleNext, handleSubmit }) => 
                     />
                 </Grid>
 
-                {/* Description */}
+                {/* Description Field */}
                 <Grid item xs={12}>
                     <TextField
                         fullWidth
@@ -205,13 +207,70 @@ const TenantForm = ({ tenantData, setTenantData, handleNext, handleSubmit }) => 
                     />
                 </Grid>
 
-                {/* Navigation Links and Buttons */}
+                {/* Additional Fields for Edit Mode */}
+                {isEditMode && (
+                    <>
+                        <Grid item xs={12} sm={6} md={3}>
+                            <TextField
+                                fullWidth
+                                name="id"
+                                label="ID"
+                                value={formik.values.id}
+                                InputProps={{ readOnly: true }}
+                                disabled
+                            />
+                        </Grid>
+
+                        <Grid item xs={12} sm={6} md={3}>
+                            <TextField
+                                fullWidth
+                                name="created_by"
+                                label="Created By"
+                                value={formik.values.created_by}
+                                InputProps={{ readOnly: true }}
+                                disabled
+                            />
+                        </Grid>
+
+                        <Grid item xs={12} sm={6} md={3}>
+                            <TextField
+                                fullWidth
+                                name="updated_by"
+                                label="Updated By"
+                                value={formik.values.updated_by}
+                                InputProps={{ readOnly: true }}
+                                disabled
+                            />
+                        </Grid>
+
+                        <Grid item xs={12} sm={6} md={3}>
+                            <TextField
+                                fullWidth
+                                name="created_at"
+                                label="Created At"
+                                value={format(new Date(formik.values.created_at), 'dd MMM yyyy, hh:mm a')}
+                                InputProps={{ readOnly: true }}
+                                disabled
+                            />
+                        </Grid>
+
+                        <Grid item xs={12} sm={6} md={3}>
+                            <TextField
+                                fullWidth
+                                name="updated_at"
+                                label="Updated At"
+                                value={format(new Date(formik.values.updated_at), 'dd MMM yyyy, hh:mm a')}
+                                InputProps={{ readOnly: true }}
+                                disabled
+                            />
+                        </Grid>
+                    </>
+                )}
+
+                {/* Form Navigation Buttons */}
                 <Grid item xs={12}>
                     <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mt: 3 }}>
-                        <Button
-                            onClick={() => navigate('/md/org/tenants/list')} // Navigates back to tenants list
-                            sx={{ my: 3, ml: 1 }}
-                        >
+                        <Button onClick={() => navigate('/md/org/tenants/list')} sx={{ my: 3, ml: 1 }}>
                             Back
                         </Button>
                         <Stack direction="row" spacing={2}>
@@ -220,7 +279,7 @@ const TenantForm = ({ tenantData, setTenantData, handleNext, handleSubmit }) => 
                                     Preview
                                 </Button>
                                 <Button type="submit" variant="contained" sx={{ my: 3, ml: 1 }} color="primary">
-                                    Create
+                                    {isEditMode ? 'Update' : 'Create'}
                                 </Button>
                             </AnimateButton>
                         </Stack>
