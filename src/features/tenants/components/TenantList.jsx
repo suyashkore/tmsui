@@ -102,6 +102,7 @@ const TenantList = () => {
     const [selectedRows, setSelectedRows] = useState([]);
     const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 5 });
     const [sortModel, setSortModel] = useState([]);
+    const [filterModel, setFilterModel] = useState({ items: [] });
     const [confirmModal, setConfirmModal] = useState(null); // To control the confirmation dialog
     const theme = useTheme();
     const isMediumScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -111,12 +112,23 @@ const TenantList = () => {
         const loadTenants = async () => {
             try {
                 setLoading(true);
+    
+                // Convert filter model to flat query parameters
+                const filters = filterModel.items.reduce((acc, filterItem) => {
+                    if (filterItem.value) {
+                        acc[filterItem.field] = filterItem.value; // Directly map field to value
+                    }
+                    return acc;
+                }, {});
+    
                 const queryParams = {
                     page: paginationModel.page + 1, // Backend expects 1-based page index
                     per_page: paginationModel.pageSize,
                     sort_by: sortModel[0]?.field || 'updated_at',
                     sort_order: sortModel[0]?.sort || 'desc',
+                    ...filters, // Spread the flattened filters into query parameters
                 };
+    
                 const { data, total: fetchedTotal } = await fetchTenants(queryParams);
                 setTenants(data);
                 setTotal(fetchedTotal);
@@ -126,10 +138,10 @@ const TenantList = () => {
                 setLoading(false);
             }
         };
-
+    
         loadTenants();
-    }, [paginationModel, sortModel, fetchTenants]);
-
+    }, [paginationModel, sortModel, filterModel, fetchTenants]);
+    
     const columns = [
         { field: 'id', headerName: 'ID', flex: 0.5, minWidth: 70 },
         { field: 'name', headerName: 'Name', flex: 1, minWidth: 150 },
@@ -252,8 +264,6 @@ const TenantList = () => {
             console.error('Failed to download tenant template:', error);
         }
     };
-    
-       
 
     const handleImport = async () => {
         console.log('Import tenants data');
@@ -279,6 +289,7 @@ const TenantList = () => {
                     paginationModel={paginationModel}
                     onPaginationModelChange={setPaginationModel}
                     onSortModelChange={setSortModel}
+                    onFilterModelChange={(newFilterModel) => setFilterModel(newFilterModel)}
                     checkboxSelection
                     onRowSelectionModelChange={handleRowSelection}
                     slots={{
