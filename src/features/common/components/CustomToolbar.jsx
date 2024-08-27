@@ -1,7 +1,7 @@
 import React from 'react';
 import { Stack, Tooltip, IconButton, useTheme, useMediaQuery } from '@mui/material';
-import { GridToolbarColumnsButton } from '@mui/x-data-grid';
 import { IconPencil, IconTrash, IconBan, IconPlus, IconEye, IconFileTypeXls, IconUpload, IconDownload } from '@tabler/icons-react';
+import MainCard from 'ui-component/cards/MainCard';
 
 const CustomToolbar = ({
     onView,
@@ -18,6 +18,7 @@ const CustomToolbar = ({
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
     return (
+        <MainCard>
         <Stack
             direction="row"
             spacing={1}
@@ -28,7 +29,6 @@ const CustomToolbar = ({
                 gap: isSmallScreen ? 2 : 1,
             }}
         >
-            <GridToolbarColumnsButton />
             <Tooltip title="Create New">
                 <IconButton color="primary" onClick={onCreate}>
                     <IconPlus />
@@ -78,6 +78,7 @@ const CustomToolbar = ({
                 </IconButton>
             </Tooltip>
         </Stack>
+        </MainCard>
     );
 };
 
