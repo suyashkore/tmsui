@@ -33,13 +33,10 @@ const TenantStepper = ({ initialTenantData = new Tenant(), isEditMode = false })
      */
     const handleFormSubmit = async () => {
         try {
-            console.log('Submitting the form...');
             let result;
             if (isEditMode) {
-                console.log('Edit Mode: Updating Tenant');
                 result = await updateTenant(tenantData.id, tenantData);
             } else {
-                console.log('Create Mode: Creating New Tenant');
                 result = await createTenant(tenantData);
             }
 
@@ -48,8 +45,6 @@ const TenantStepper = ({ initialTenantData = new Tenant(), isEditMode = false })
             setApiSuccess(true);
             setResponseMessage(`Successfully ${isEditMode ? 'updated' : 'created'} Tenant with ID: ${savedTenant.id}`);
             setErrorResponse(null);
-
-            console.log('Tenant Saved Successfully:', savedTenant);
 
             // If skipPreview is true, directly move to the last step
             if (skipPreview) {
@@ -89,7 +84,6 @@ const TenantStepper = ({ initialTenantData = new Tenant(), isEditMode = false })
      * Determines which content to render based on the current step.
      */
     const stepContent = useMemo(() => {
-        console.log(`Rendering content for step: ${activeStep}`);
         switch (activeStep) {
             case 0:
                 return (

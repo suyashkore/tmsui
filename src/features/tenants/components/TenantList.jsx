@@ -134,10 +134,8 @@ const TenantList = () => {
         try {
             if (confirmModal.action === 'deactivate') {
                 const response = await deactivateTenant(confirmModal.id);
-                console.log(`Tenant with ID ${confirmModal.id} deactivated successfully.`, response);
             } else if (confirmModal.action === 'delete') {
                 const response = await deleteTenant(confirmModal.id);
-                console.log(`Tenant with ID ${confirmModal.id} deleted successfully.`, response);
             }
             setConfirmModal(null); // Close the modal
             setSelectedRows([]); // Reset selected rows

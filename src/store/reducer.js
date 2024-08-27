@@ -6,7 +6,6 @@ import storage from 'redux-persist/lib/storage';
 // project imports
 import { LOGOUT } from './actions';
 import snackbarReducer from './slices/snackbar';
-import tenantReducer from './slices/tenant';
 
 // ==============================|| PLACEHOLDER PERSISTED REDUCER ||============================== //
 
@@ -29,8 +28,7 @@ const placeholderPersistedReducer = persistReducer(
 
 const appReducer = combineReducers({
     snackbar: snackbarReducer,
-    placeholder: placeholderPersistedReducer, // Placeholder persisted reducer
-    tenant: tenantReducer
+    placeholder: placeholderPersistedReducer // Placeholder persisted reducer
 });
 
 const rootReducer = (state, action) => {
