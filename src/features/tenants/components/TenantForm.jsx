@@ -27,7 +27,9 @@ const TenantForm = ({ tenantData, setTenantData, handleNext, handleSubmit, isEdi
         country: Yup.string().required('Country is required'),
         state: Yup.string().required('State is required'),
         city: Yup.string().required('City is required'),
-        pincode: Yup.string().required('Pincode is required').matches(/^\d{6}$/, 'Pincode must be 6 digits'),
+        pincode: Yup.string()
+            .required('Pincode is required')
+            .matches(/^\d{6}$/, 'Pincode must be 6 digits'),
         address: Yup.string().required('Address is required'),
         latitude: Yup.string()
             .required('Latitude is required')
@@ -44,7 +46,7 @@ const TenantForm = ({ tenantData, setTenantData, handleNext, handleSubmit, isEdi
         validationSchema,
         onSubmit: (values) => {
             setTenantData(values);
-            handleSubmit(); // Call the handleSubmit function provided as a prop
+            handleSubmit(true); // Call the handleSubmit function with true to skip the preview step
         },
     });
 
@@ -278,7 +280,13 @@ const TenantForm = ({ tenantData, setTenantData, handleNext, handleSubmit, isEdi
                                 <Button variant="outlined" sx={{ my: 3, ml: 1 }} onClick={handlePreview}>
                                     Preview
                                 </Button>
-                                <Button type="submit" variant="contained" sx={{ my: 3, ml: 1 }} color="primary">
+                                <Button
+                                    type="submit"
+                                    variant="contained"
+                                    sx={{ my: 3, ml: 1 }}
+                                    color="primary"
+                                    onClick={() => formik.handleSubmit(true)} // Trigger form submit and skip preview
+                                >
                                     {isEditMode ? 'Update' : 'Create'}
                                 </Button>
                             </AnimateButton>

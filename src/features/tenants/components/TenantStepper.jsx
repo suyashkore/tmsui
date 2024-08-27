@@ -24,6 +24,7 @@ const TenantStepper = ({ initialTenantData = new Tenant(), isEditMode = false })
     const [errorResponse, setErrorResponse] = useState(null); // Stores any error responses from the API
 
     const { createTenant, updateTenant } = useTenantApi(); // Hooks for API calls
+    const [skipPreview, setSkipPreview] = useState(false); // Flag to control skipping the preview step
 
     const steps = ['Data', 'Preview', 'Status']; // Step labels
 
@@ -49,12 +50,24 @@ const TenantStepper = ({ initialTenantData = new Tenant(), isEditMode = false })
             setErrorResponse(null);
 
             console.log('Tenant Saved Successfully:', savedTenant);
-            handleNext(); // Move to the confirmation step
+
+            // If skipPreview is true, directly move to the last step
+            if (skipPreview) {
+                setActiveStep(2); // Move directly to the confirmation step
+            } else {
+                handleNext(); // Proceed to the next step as usual
+            }
         } catch (error) {
             setApiSuccess(false);
             setResponseMessage(error.message);
             setErrorResponse(error);
-            handleNext(); // Move to the confirmation step even on failure
+
+            // If skipPreview is true, directly move to the last step even if there's an error
+            if (skipPreview) {
+                setActiveStep(2);
+            } else {
+                handleNext(); // Proceed to the next step as usual
+            }
         }
     };
 
@@ -84,7 +97,10 @@ const TenantStepper = ({ initialTenantData = new Tenant(), isEditMode = false })
                         tenantData={tenantData}
                         setTenantData={setTenantData}
                         handleNext={handleNext}
-                        handleSubmit={handleFormSubmit}
+                        handleSubmit={(skipPreview) => {
+                            setSkipPreview(skipPreview); // Control whether to skip the preview step
+                            handleFormSubmit();
+                        }}
                         isEditMode={isEditMode}
                     />
                 );
