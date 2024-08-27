@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Box, IconButton, Stack, Tooltip, useMediaQuery, useTheme, CircularProgress } from '@mui/material';
+import { Box, IconButton, Stack, Tooltip, useMediaQuery, useTheme, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from '@mui/material';
 import { DataGrid, GridToolbarColumnsButton } from '@mui/x-data-grid';
 import { IconPencil, IconTrash, IconBan, IconPlus, IconEye, IconFileTypeXls, IconUpload, IconDownload } from '@tabler/icons-react';
 import MainCard from 'ui-component/cards/MainCard';
@@ -8,12 +8,12 @@ import useTenantApi from '../hooks/useTenantApi';
 
 /**
  * CustomToolbar Component
- * - Provides the toolbar for the DataGrid with actions like Create, View, Edit, Disable, Delete, etc.
+ * - Provides the toolbar for the DataGrid with actions like Create, View, Edit, Deactivate, Delete, etc.
  */
 function CustomToolbar({
     onView,
     onEdit,
-    onDisable,
+    onDeactivate,
     onDelete,
     hasSelection,
     onCreate,
@@ -55,9 +55,9 @@ function CustomToolbar({
                     </IconButton>
                 </span>
             </Tooltip>
-            <Tooltip title="Disable Selected">
+            <Tooltip title="Deactivate Selected">
                 <span>
-                    <IconButton color="secondary" onClick={onDisable} disabled={!hasSelection}>
+                    <IconButton color="secondary" onClick={onDeactivate} disabled={!hasSelection}>
                         <IconBan />
                     </IconButton>
                 </span>
@@ -91,17 +91,18 @@ function CustomToolbar({
 /**
  * TenantList Component
  * - Displays a list of tenants with server-side pagination, sorting, and filtering.
- * - Provides actions like viewing, editing, disabling, and deleting tenants.
+ * - Provides actions like viewing, editing, deactivating, deleting, and managing tenant files.
  */
 const TenantList = () => {
     const navigate = useNavigate();
-    const { fetchTenants } = useTenantApi();
+    const { fetchTenants, deactivateTenant, deleteTenant, downloadTenantTemplate, uploadTenantFile } = useTenantApi();
     const [tenants, setTenants] = useState([]);
     const [total, setTotal] = useState(0);
     const [loading, setLoading] = useState(false);
     const [selectedRows, setSelectedRows] = useState([]);
     const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 5 });
     const [sortModel, setSortModel] = useState([]);
+    const [confirmModal, setConfirmModal] = useState(null); // To control the confirmation dialog
     const theme = useTheme();
     const isMediumScreen = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -164,7 +165,6 @@ const TenantList = () => {
         setSelectedRows(selection);
     };
 
-    // Handlers for Create, View, Edit, Disable, Delete actions
     const handleCreate = () => {
         navigate('/md/org/tenants/create');
     };
@@ -185,19 +185,81 @@ const TenantList = () => {
         }
     };
 
-    const handleDisable = () => {
-        console.log('Disable selected rows:', selectedRows);
+    const handleDeactivate = () => {
+        if (selectedRows.length === 1) {
+            setConfirmModal({
+                action: 'deactivate',
+                id: selectedRows[0],
+                message: `Are you sure you want to deactivate the tenant with ID: ${selectedRows[0]}?`,
+            });
+        } else {
+            console.warn('Please select a single row to deactivate.');
+        }
     };
 
     const handleDelete = () => {
-        console.log('Delete selected rows:', selectedRows);
+        if (selectedRows.length === 1) {
+            setConfirmModal({
+                action: 'delete',
+                id: selectedRows[0],
+                message: `Are you sure you want to delete the tenant with ID: ${selectedRows[0]}? This action cannot be undone.`,
+            });
+        } else {
+            console.warn('Please select a single row to delete.');
+        }
     };
 
-    const handleImport = () => {
+    const confirmAction = async () => {
+        try {
+            if (confirmModal.action === 'deactivate') {
+                const response = await deactivateTenant(confirmModal.id);
+                console.log(`Tenant with ID ${confirmModal.id} deactivated successfully.`, response);
+            } else if (confirmModal.action === 'delete') {
+                const response = await deleteTenant(confirmModal.id);
+                console.log(`Tenant with ID ${confirmModal.id} deleted successfully.`, response);
+            }
+            setConfirmModal(null); // Close the modal
+            setSelectedRows([]); // Reset selected rows
+            // Refresh the list after the action
+            const { data, total: fetchedTotal } = await fetchTenants({
+                page: paginationModel.page + 1,
+                per_page: paginationModel.pageSize,
+                sort_by: sortModel[0]?.field || 'updated_at',
+                sort_order: sortModel[0]?.sort || 'desc',
+            });
+            setTenants(data);
+            setTotal(fetchedTotal);
+        } catch (error) {
+            console.error('Action failed:', error);
+        }
+    };
+
+    const handleCloseModal = () => {
+        setConfirmModal(null);
+    };
+
+    const handleDownloadTemplate = async () => {
+        try {
+            const response = await downloadTenantTemplate();
+            const url = window.URL.createObjectURL(new Blob([response]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'tenant_template.xlsx'); // Use a specific file name
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+        } catch (error) {
+            console.error('Failed to download tenant template:', error);
+        }
+    };
+    
+       
+
+    const handleImport = async () => {
         console.log('Import tenants data');
     };
 
-    const handleExport = () => {
+    const handleExport = async () => {
         console.log('Export tenants data');
     };
 
@@ -226,11 +288,11 @@ const TenantList = () => {
                         toolbar: {
                             onView: handleView,
                             onEdit: handleEdit,
-                            onDisable: handleDisable,
+                            onDeactivate: handleDeactivate,
                             onDelete: handleDelete,
                             hasSelection: selectedRows.length > 0,
                             onCreate: handleCreate,
-                            onDownloadTemplate: () => {},
+                            onDownloadTemplate: handleDownloadTemplate,
                             onImport: handleImport,
                             onExport: handleExport,
                         },
@@ -244,6 +306,30 @@ const TenantList = () => {
                     }}
                 />
             </Box>
+            {/* Confirmation Modal */}
+            {confirmModal && (
+                <Dialog
+                    open={Boolean(confirmModal)}
+                    onClose={handleCloseModal}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                >
+                    <DialogTitle id="alert-dialog-title">Confirmation</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-description">
+                            {confirmModal.message}
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleCloseModal} color="primary">
+                            Cancel
+                        </Button>
+                        <Button onClick={confirmAction} color="secondary" autoFocus>
+                            Confirm
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+            )}
         </MainCard>
     );
 };

@@ -21,8 +21,8 @@ const TenantDetails = ({ tenant, mode = 'view', handleBack, handleSubmit }) => {
     const title = mode === 'view'
         ? 'Tenant Details'
         : mode === 'edit'
-        ? 'Review Edited Tenant Details'
-        : 'Review New Tenant Details';
+        ? 'Preview Edited Tenant Details'
+        : 'Preview New Tenant Details';
 
     return (
         <Card sx={{ maxWidth: '100%', p: mode === 'preview' ? 0 : 2 }}>

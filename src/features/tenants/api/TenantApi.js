@@ -62,6 +62,68 @@ const TenantApi = {
         } catch (error) {
             throw ApiErrorResponse.fromApiResponse(error);
         }
+    },
+
+    /**
+     * Deactivates a tenant by its ID.
+     * @param {number} id - The tenant ID.
+     * @returns {Promise<Object>} The response containing the deactivation status.
+     */
+    async deactivateTenant(id) {
+        try {
+            const response = await backendApiCall.patch(`/tenants/${id}/deactivate`);
+            return response.data;
+        } catch (error) {
+            throw ApiErrorResponse.fromApiResponse(error);
+        }
+    },
+
+    /**
+     * Deletes a tenant by its ID.
+     * @param {number} id - The tenant ID.
+     * @returns {Promise<Object>} The response containing the deletion status.
+     */
+    async deleteTenant(id) {
+        try {
+            const response = await backendApiCall.delete(`/tenants/${id}`);
+            return response.data;
+        } catch (error) {
+            throw ApiErrorResponse.fromApiResponse(error);
+        }
+    },
+
+    /**
+     * Uploads an image or file for a tenant.
+     * @param {number} id - The tenant ID.
+     * @param {File} file - The file to upload.
+     * @param {string} fieldName - The field name for the file URL.
+     * @returns {Promise<Object>} The response containing the file URL.
+     */
+    async uploadTenantFile(id, file, fieldName) {
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('urlfield_name', fieldName);
+            const response = await backendApiCall.post(`/tenants/${id}/uploadimgorfile`, formData);
+            return response.data;
+        } catch (error) {
+            throw ApiErrorResponse.fromApiResponse(error);
+        }
+    },
+
+    /**
+     * Downloads the tenant XLSX template.
+     * @returns {Promise<Blob>} The XLSX file blob.
+     */
+    async downloadTenantTemplate() {
+        try {
+            const response = await backendApiCall.get('/tenants/xlsxtemplate', {
+                responseType: 'blob' // Ensure response is treated as a file
+            });
+            return response.data;
+        } catch (error) {
+            throw ApiErrorResponse.fromApiResponse(error);
+        }
     }
 };
 
