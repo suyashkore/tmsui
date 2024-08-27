@@ -180,17 +180,10 @@ const TenantList = () => {
 
     const handleCloseModal = () => setConfirmModal(null);
 
-    // Handlers for downloading, importing, and exporting tenant data
+    // Handler for downloading template
     const handleDownloadTemplate = async () => {
         try {
-            const response = await downloadTenantTemplate();
-            const url = window.URL.createObjectURL(new Blob([response]));
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', 'tenant_template.xlsx');
-            document.body.appendChild(link);
-            link.click();
-            link.remove();
+            await downloadTenantTemplate(); // The updated function in TenantApi.js handles the download directly
         } catch (error) {
             console.error('Failed to download tenant template:', error);
         }
