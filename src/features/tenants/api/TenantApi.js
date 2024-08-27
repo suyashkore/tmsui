@@ -1,6 +1,9 @@
 import backendApiCall from 'utils/backendApiCall';
 import { Tenant } from '../models/TenantModel';
 import ApiErrorResponse from 'features/common/models/ApiErrorResponse';
+import ImportApiResponse from 'features/common/models/ImportApiResponse';
+import ImportApiErrorResponse from 'features/common/models/ImportApiErrorResponse';
+
 
 /**
  * Tenant API - Handles all the backend API calls for tenant-related actions.
@@ -113,18 +116,97 @@ const TenantApi = {
 
     /**
      * Downloads the tenant XLSX template.
-     * @returns {Promise<Blob>} The XLSX file blob.
+     * @returns {Promise<void>} Initiates the file download with the correct filename.
      */
     async downloadTenantTemplate() {
         try {
+            // Make the API call with `responseType: 'blob'` to treat the response as a file
             const response = await backendApiCall.get('/tenants/xlsxtemplate', {
-                responseType: 'blob' // Ensure response is treated as a file
+                responseType: 'blob'
             });
-            return response.data;
+
+            // Normalize headers to handle case insensitivity
+            const contentDisposition = response.headers['content-disposition'] || response.headers['Content-Disposition'] || response.headers['CONTENT-DISPOSITION'];
+            const filename = contentDisposition
+                ? contentDisposition.split('filename=')[1]?.replace(/['"]/g, '') // Remove any quotes around the filename
+                : 'tenant_template.xlsx'; // Fallback filename if not present
+
+            // Create a URL for the blob and trigger the download
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', filename); // Set the correct filename
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link); // Clean up the DOM after triggering the download
         } catch (error) {
             throw ApiErrorResponse.fromApiResponse(error);
         }
+    },
+
+    /**
+     * Exports tenants to an XLSX file based on the provided query parameters.
+     * @param {Object} params - Query parameters like active status, name, etc.
+     * @returns {Promise<void>} Initiates the file download with the correct filename.
+     */
+    async exportTenants(params = {}) {
+        try {
+            // Make the API call with `responseType: 'blob'` to treat the response as a file
+            const response = await backendApiCall.get('/tenants/export/xlsx', {
+                params,
+                responseType: 'blob'
+            });
+
+            // Normalize headers to handle case insensitivity
+            const contentDisposition = response.headers['content-disposition'] || response.headers['Content-Disposition'] || response.headers['CONTENT-DISPOSITION'];
+            const filename = contentDisposition
+                ? contentDisposition.split('filename=')[1]?.replace(/['"]/g, '') // Remove any quotes around the filename
+                : 'tenant_export.xlsx'; // Fallback filename if not present
+
+            // Create a URL for the blob and trigger the download
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', filename); // Set the correct filename
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link); // Clean up the DOM after triggering the download
+        } catch (error) {
+            throw ApiErrorResponse.fromApiResponse(error);
+        }
+    },
+
+    /**
+     * Imports tenants from an XLSX file.
+     * @param {File} file - The file to upload for import.
+     * @returns {Promise<ImportApiResponse>} The import result details.
+     */
+    async importTenants(file) {
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+            const response = await backendApiCall.post('/tenants/import/xlsx', formData);
+            return ImportApiResponse.fromApiResponse(response.data);
+        } catch (error) {
+            if (error.response && error.response.data) {
+                const responseData = error.response.data;
+                // Enhanced check for import errors
+                if (
+                    responseData.data &&
+                    responseData.data.success === false &&
+                    Array.isArray(responseData.data.errors) &&
+                    responseData.data.errors.length > 0
+                ) {
+                    throw ImportApiErrorResponse.fromApiResponse(responseData);
+                } else {
+                    throw ApiErrorResponse.fromApiResponse(responseData);
+                }
+            } else {
+                throw ApiErrorResponse.fromApiResponse(error);
+            }            
+        }
     }
+
 };
 
 export default TenantApi;

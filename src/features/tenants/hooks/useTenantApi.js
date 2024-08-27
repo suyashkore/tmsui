@@ -5,7 +5,8 @@ import TenantApi from '../api/TenantApi';
  * Custom hook to interact with the Tenant API.
  * 
  * This hook provides methods to fetch, create, update, deactivate, delete tenants, 
- * upload files, and download templates, while managing loading and error states.
+ * upload files, download templates, export tenants, and import tenants,
+ * while managing loading and error states.
  */
 const useTenantApi = () => {
     const [loading, setLoading] = useState(false);
@@ -137,7 +138,44 @@ const useTenantApi = () => {
         try {
             setLoading(true);
             setError(null);
-            const response = await TenantApi.downloadTenantTemplate();
+            const response = await TenantApi.downloadTenantTemplate(); // Trigger the file download directly
+            return response;
+        } catch (err) {
+            setError(err);
+            throw err;
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+    /**
+     * Export tenants to an XLSX file.
+     * @param {Object} params - Query parameters like active status, name, etc.
+     */
+    const exportTenants = useCallback(async (params = {}) => {
+        try {
+            setLoading(true);
+            setError(null);
+            const response = await TenantApi.exportTenants(params); // Trigger the file download directly
+            return response;
+        } catch (err) {
+            setError(err);
+            throw err;
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+    /**
+     * Import tenants from an XLSX file.
+     * @param {File} file - The file to upload for import.
+     * @returns {Promise<ImportApiResponse>} The import result details.
+     */
+    const importTenants = useCallback(async (file) => {
+        try {
+            setLoading(true);
+            setError(null);
+            const response = await TenantApi.importTenants(file);
             return response;
         } catch (err) {
             setError(err);
@@ -156,6 +194,8 @@ const useTenantApi = () => {
         deleteTenant,
         uploadTenantFile,
         downloadTenantTemplate,
+        exportTenants, // Added export function
+        importTenants, // Added import function
         loading,
         error,
     };
