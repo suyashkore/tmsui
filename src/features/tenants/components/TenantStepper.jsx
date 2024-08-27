@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { Stepper, Step, StepLabel, Box } from '@mui/material';
 import TenantForm from './TenantForm';
 import TenantDetails from './TenantDetails';
 import TenantConfirmation from './TenantConfirmation';
@@ -23,6 +24,8 @@ const TenantStepper = ({ initialTenantData = new Tenant(), isEditMode = false })
     const [errorResponse, setErrorResponse] = useState(null); // Stores any error responses from the API
 
     const { createTenant, updateTenant } = useTenantApi(); // Hooks for API calls
+
+    const steps = ['Data', 'Preview', 'Status']; // Step labels
 
     /**
      * Handles form submission based on the mode (create or edit).
@@ -108,7 +111,21 @@ const TenantStepper = ({ initialTenantData = new Tenant(), isEditMode = false })
         }
     }, [activeStep, tenantData, apiSuccess, responseMessage, errorResponse, isEditMode]);
 
-    return <div>{stepContent}</div>;
+    return (
+        <Box>
+            {/* Stepper component to display steps */}
+            <Stepper activeStep={activeStep} sx={{ mb: 4 }}>
+                {steps.map((label) => (
+                    <Step key={label}>
+                        <StepLabel>{label}</StepLabel>
+                    </Step>
+                ))}
+            </Stepper>
+
+            {/* Render the step content */}
+            {stepContent}
+        </Box>
+    );
 };
 
 export default TenantStepper;
