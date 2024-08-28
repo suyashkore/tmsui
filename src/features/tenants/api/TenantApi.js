@@ -102,7 +102,7 @@ const TenantApi = {
      * @param {string} fieldName - The field name for the file URL.
      * @returns {Promise<Object>} The response containing the file URL.
      */
-    async uploadTenantFile(id, file, fieldName) {
+    async uploadTenantImgOrFile(id, file, fieldName) {
         try {
             const formData = new FormData();
             formData.append('file', file);

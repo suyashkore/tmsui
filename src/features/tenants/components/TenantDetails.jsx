@@ -1,9 +1,9 @@
-// tmsui/src/features/tenants/components/TenantDetails.jsx
-
-import React from 'react';
+import React, { useState } from 'react';
 import { Grid, Typography, Card, CardContent, Button, Stack } from '@mui/material';
 import { format } from 'date-fns';
 import AnimateButton from 'ui-component/extended/AnimateButton';
+import ImgOrFileUploadModal from 'features/common/components/ImgOrFileUploadModal';
+import useTenantApi from '../hooks/useTenantApi';
 
 /**
  * TenantDetails Component
@@ -17,6 +17,34 @@ import AnimateButton from 'ui-component/extended/AnimateButton';
  * @returns {JSX.Element} Rendered TenantDetails component.
  */
 const TenantDetails = ({ tenant, mode = 'view', handleBack, handleSubmit }) => {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [logoUrl, setLogoUrl] = useState(tenant.logo_url);
+    const { uploadTenantImgOrFile } = useTenantApi();
+
+    // Function to open the modal
+    const handleOpenModal = () => {
+        setIsModalOpen(true);
+    };
+
+    // Function to close the modal
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+    };
+
+    // Function to handle file upload
+    const handleUpload = async (file, urlFieldName) => {
+        try {
+            const response = await uploadTenantImgOrFile(tenant.id, file, urlFieldName);
+            // Append a timestamp to the logo URL to force refresh
+            const newLogoUrl = `${response[urlFieldName]}?t=${new Date().getTime()}`;
+            setLogoUrl(newLogoUrl); // Update the logo URL after successful upload
+            return response;
+        } catch (error) {
+            throw error;
+            // Handle errors if necessary
+        }
+    };
+
     // Determine the title based on the mode
     const title = mode === 'view'
         ? 'Tenant Details'
@@ -104,18 +132,29 @@ const TenantDetails = ({ tenant, mode = 'view', handleBack, handleSubmit }) => {
                         <Typography variant="body2">{tenant.active ? 'Yes' : 'No'}</Typography>
                     </Grid>
 
-                    {/* Logo URL */}
+                    {/* Logo URL with Upload/Change Button */}
                     <Grid item xs={12} sm={6} md={3}>
                         <Typography variant="subtitle1">Logo</Typography>
                         <Typography variant="body2">
-                            {tenant.logo_url ? (
+                            {logoUrl ? (
                                 <img
-                                    src={`${import.meta.env.VITE_BACKEND_API_URL}${tenant.logo_url}`}
+                                    src={`${import.meta.env.VITE_BACKEND_API_URL}${logoUrl}`}
                                     alt="Tenant Logo"
                                     style={{ maxWidth: '100px', maxHeight: '100px' }}
                                 />
-                            ) : 'N/A'}
+                            ) : (
+                                (mode === 'edit' || mode === 'view') ? (
+                                    <Button onClick={handleOpenModal} sx={{ mt: 1 }}>
+                                        Upload
+                                    </Button>
+                                ) : 'N/A'
+                            )}
                         </Typography>
+                        {logoUrl && (mode === 'edit' || mode === 'view') && (
+                            <Button onClick={handleOpenModal} sx={{ mt: 1 }}>
+                                Change
+                            </Button>
+                        )}
                     </Grid>
 
                     {/* Conditionally render metadata fields in edit or view mode */}
@@ -177,6 +216,15 @@ const TenantDetails = ({ tenant, mode = 'view', handleBack, handleSubmit }) => {
                         </Stack>
                     </Grid>
                 )}
+
+                {/* Modal for Uploading/Changing Logo */}
+                <ImgOrFileUploadModal
+                    open={isModalOpen}
+                    onClose={handleCloseModal}
+                    onUpload={handleUpload}  // Use the handleUpload function defined above
+                    uploadTitle="Upload Tenant Logo"
+                    urlFieldName="logo_url"
+                />
             </CardContent>
         </Card>
     );

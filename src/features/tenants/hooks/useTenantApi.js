@@ -117,11 +117,11 @@ const useTenantApi = () => {
     /**
      * Upload an image or file for a tenant.
      */
-    const uploadTenantFile = useCallback(async (id, file, fieldName) => {
+    const uploadTenantImgOrFile = useCallback(async (id, file, fieldName) => {
         try {
             setLoading(true);
             setError(null);
-            const response = await TenantApi.uploadTenantFile(id, file, fieldName);
+            const response = await TenantApi.uploadTenantImgOrFile(id, file, fieldName);
             return response;
         } catch (err) {
             setError(err);
@@ -192,7 +192,7 @@ const useTenantApi = () => {
         updateTenant,
         deactivateTenant,
         deleteTenant,
-        uploadTenantFile,
+        uploadTenantImgOrFile,
         downloadTenantTemplate,
         exportTenants, // Added export function
         importTenants, // Added import function

@@ -11,7 +11,7 @@ import ImportXlsxModal from 'features/common/components/ImportXlsxModal'; // Imp
 
 const TenantList = () => {
     const navigate = useNavigate();
-    const { fetchTenants, deactivateTenant, deleteTenant, downloadTenantTemplate, uploadTenantFile, exportTenants, importTenants } = useTenantApi();
+    const { fetchTenants, deactivateTenant, deleteTenant, downloadTenantTemplate, exportTenants, importTenants } = useTenantApi();
 
     // State variables for managing tenants data, pagination, sorting, and filters
     const [tenants, setTenants] = useState([]);
@@ -115,7 +115,7 @@ const TenantList = () => {
             minWidth: 100,
             renderCell: (params) => (
                 <img
-                    src={params.value ? `${import.meta.env.VITE_BACKEND_API_URL}${params.value}` : 'path/to/default/image'}
+                    src={params.value ? `${import.meta.env.VITE_BACKEND_API_URL}${params.value}?t=${new Date().getTime()}` : 'path/to/default/image'}
                     alt="logo"
                     style={{ width: '16px', height: '16px' }}
                 />
