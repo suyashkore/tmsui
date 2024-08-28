@@ -188,19 +188,8 @@ const TenantApi = {
             const response = await backendApiCall.post('/tenants/import/xlsx', formData);
             return ImportApiResponse.fromApiResponse(response.data);
         } catch (error) {
-            if (error.response && error.response.data) {
-                const responseData = error.response.data;
-                // Enhanced check for import errors
-                if (
-                    responseData.data &&
-                    responseData.data.success === false &&
-                    Array.isArray(responseData.data.errors) &&
-                    responseData.data.errors.length > 0
-                ) {
-                    throw ImportApiErrorResponse.fromApiResponse(responseData);
-                } else {
-                    throw ApiErrorResponse.fromApiResponse(responseData);
-                }
+            if (error.data) {
+                throw ImportApiErrorResponse.fromApiResponse(error);
             } else {
                 throw ApiErrorResponse.fromApiResponse(error);
             }            

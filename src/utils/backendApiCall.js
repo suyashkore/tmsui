@@ -22,9 +22,6 @@ const cleanupAndLogout = (message) => {
 // Create Axios instance for backend API calls
 const backendApiCall = axios.create({
     baseURL: `${import.meta.env.VITE_BACKEND_API_URL}${import.meta.env.VITE_BACKEND_API_BASE_NAME}` || 'http://localhost:8000/tapi/v1/',
-    headers: {
-        'Content-Type': 'application/json',
-    },
 });
 
 // ==============================|| AXIOS - FOR BACKEND SERVICES ||============================== //

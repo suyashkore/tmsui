@@ -7,10 +7,11 @@ import useTenantApi from '../hooks/useTenantApi';
 import CustomToolbar from 'features/common/components/CustomToolbar';
 import ConfirmDialog from 'features/common/components/ConfirmDialog';
 import AdvancedFilter from 'features/common/components/AdvancedFilter';
+import ImportXlsxModal from 'features/common/components/ImportXlsxModal'; // Import the common modal
 
 const TenantList = () => {
     const navigate = useNavigate();
-    const { fetchTenants, deactivateTenant, deleteTenant, downloadTenantTemplate, uploadTenantFile, exportTenants } = useTenantApi();
+    const { fetchTenants, deactivateTenant, deleteTenant, downloadTenantTemplate, uploadTenantFile, exportTenants, importTenants } = useTenantApi();
 
     // State variables for managing tenants data, pagination, sorting, and filters
     const [tenants, setTenants] = useState([]);
@@ -22,6 +23,7 @@ const TenantList = () => {
     const [columnFilters, setColumnFilters] = useState({});
     const [advancedFilters, setAdvancedFilters] = useState({});
     const [confirmModal, setConfirmModal] = useState(null);
+    const [importModalOpen, setImportModalOpen] = useState(false);
 
     /**
      * Function to apply filters from the AdvancedFilter component.
@@ -133,6 +135,22 @@ const TenantList = () => {
     const handleView = () => selectedRows.length === 1 && navigate(`/md/org/tenants/view/id/${selectedRows[0]}`);
     const handleEdit = () => selectedRows.length === 1 && navigate(`/md/org/tenants/edit/id/${selectedRows[0]}`);
 
+    const reloadTenantList = async () => {
+        try {
+            const { data, total: fetchedTotal } = await fetchTenants({
+                page: paginationModel.page + 1,
+                per_page: paginationModel.pageSize,
+                sort_by: sortModel[0]?.field || 'updated_at',
+                sort_order: sortModel[0]?.sort || 'desc',
+                ...getCombinedFilters() // Combine column and advanced filters if any
+            });
+            setTenants(data);
+            setTotal(fetchedTotal);
+        } catch (error) {
+            console.error('Failed to reload tenant list:', error);
+        }
+    };    
+
     // Handlers for deactivation and deletion with confirmation dialogs
     const handleDeactivate = () => {
         if (selectedRows.length === 1) {
@@ -164,15 +182,7 @@ const TenantList = () => {
             }
             setConfirmModal(null); // Close the modal
             setSelectedRows([]); // Reset selected rows
-            // Refresh the list after the action
-            const { data, total: fetchedTotal } = await fetchTenants({
-                page: paginationModel.page + 1,
-                per_page: paginationModel.pageSize,
-                sort_by: sortModel[0]?.field || 'updated_at',
-                sort_order: sortModel[0]?.sort || 'desc',
-            });
-            setTenants(data);
-            setTotal(fetchedTotal);
+            reloadTenantList(); // Refresh the list after the action
         } catch (error) {
             console.error('Action failed:', error);
         }
@@ -189,7 +199,14 @@ const TenantList = () => {
         }
     };
 
-    const handleImport = () => console.log('Import tenants data');
+    const handleImport = () => setImportModalOpen(true); // Open the import modal
+
+    const handleImportModalClose = () => {
+        setImportModalOpen(false);
+        reloadTenantList(); // Reload tenants after closing the modal
+    };
+    
+
     const handleExport = async () => {
         try {
             // Gather all current query parameters for export
@@ -245,6 +262,13 @@ const TenantList = () => {
                     }}
                 />
             </Box>
+
+            <ImportXlsxModal
+                open={importModalOpen}
+                onClose={handleImportModalClose}
+                onImport={importTenants} // Pass the tenant import function
+                importTitle="Import Tenants" // Optional: Customize the title
+            />
 
             {/* Confirmation Dialog for actions */}
             {confirmModal && (
