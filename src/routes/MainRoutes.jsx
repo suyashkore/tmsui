@@ -55,7 +55,10 @@ const CreateStationCoverage = Loadable(lazy(() => import('features/places/contai
 const EditStationCoverage = Loadable(lazy(() => import('features/places/containers/EditStationCoverage')));
 const ViewStationCoverage = Loadable(lazy(() => import('features/places/containers/ViewStationCoverage')));
 
-
+const LoaderRates = Loadable(lazy(() => import('features/contracts/containers/LoaderRates')));
+const CreateLoaderRate = Loadable(lazy(() => import('features/contracts/containers/CreateLoaderRate')));
+const EditLoaderRate = Loadable(lazy(() => import('features/contracts/containers/EditLoaderRate')));
+const ViewLoaderRate = Loadable(lazy(() => import('features/contracts/containers/ViewLoaderRate')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -301,8 +304,20 @@ const MainRoutes = {
         },        
         {
             path: '/md/contracts/loader/list',
-            element: <ComingSoon key="md-contracts-loader" deliveryDate="2024-08-30T23:59:59" />
+            element: <LoaderRates />
         },
+        {
+            path: '/md/contracts/loader/create',
+            element: <CreateLoaderRate />
+        },
+        {
+            path: '/md/contracts/loader/edit/id/:id',
+            element: <EditLoaderRate />
+        },
+        {
+            path: '/md/contracts/loader/view/id/:id',
+            element: <ViewLoaderRate />
+        },        
         {
             path: '/md/contracts/driver/list',
             element: <ComingSoon key="md-contracts-driver" deliveryDate="2024-08-30T23:59:59" />
