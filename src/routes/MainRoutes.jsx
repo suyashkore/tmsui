@@ -32,6 +32,10 @@ const CreateOffice = Loadable(lazy(() => import('features/offices/containers/Cre
 const EditOffice = Loadable(lazy(() => import('features/offices/containers/EditOffice')));
 const ViewOffice = Loadable(lazy(() => import('features/offices/containers/ViewOffice')));
 
+const Customers = Loadable(lazy(() => import('features/customers/containers/Customers')));
+const CreateCustomer = Loadable(lazy(() => import('features/customers/containers/CreateCustomer')));
+const EditCustomer = Loadable(lazy(() => import('features/customers/containers/EditCustomer')));
+const ViewCustomer = Loadable(lazy(() => import('features/customers/containers/ViewCustomer')));
 
 
 // ==============================|| MAIN ROUTING ||============================== //
@@ -182,8 +186,20 @@ const MainRoutes = {
         },        
         {
             path: '/md/ext/org/customers/list',
-            element: <ComingSoon key="md-ext-org-customers" deliveryDate="2024-08-28T23:59:59" />
+            element: <Customers />
         },
+        {
+            path: '/md/ext/org/customers/create',
+            element: <CreateCustomer />
+        },
+        {
+            path: '/md/ext/org/customers/edit/id/:id',
+            element: <EditCustomer />
+        },
+        {
+            path: '/md/ext/org/customers/view/id/:id',
+            element: <ViewCustomer />
+        },        
         {
             path: '/md/ext/org/channelpartners/list',
             element: <ComingSoon key="md-ext-org-channelpartners" deliveryDate="2024-08-28T23:59:59" />
