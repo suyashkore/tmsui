@@ -45,6 +45,17 @@ const CreateVehicle = Loadable(lazy(() => import('features/fleet/containers/Crea
 const EditVehicle = Loadable(lazy(() => import('features/fleet/containers/EditVehicle')));
 const ViewVehicle = Loadable(lazy(() => import('features/fleet/containers/ViewVehicle')));
 
+const GeoHierarchies = Loadable(lazy(() => import('features/places/containers/GeoHierarchies')));
+const CreateGeoHierarchy = Loadable(lazy(() => import('features/places/containers/CreateGeoHierarchy')));
+const EditGeoHierarchy = Loadable(lazy(() => import('features/places/containers/EditGeoHierarchy')));
+const ViewGeoHierarchy = Loadable(lazy(() => import('features/places/containers/ViewGeoHierarchy')));
+
+const StationCoverages = Loadable(lazy(() => import('features/places/containers/StationCoverages')));
+const CreateStationCoverage = Loadable(lazy(() => import('features/places/containers/CreateStationCoverage')));
+const EditStationCoverage = Loadable(lazy(() => import('features/places/containers/EditStationCoverage')));
+const ViewStationCoverage = Loadable(lazy(() => import('features/places/containers/ViewStationCoverage')));
+
+
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -258,12 +269,36 @@ const MainRoutes = {
         },        
         {
             path: '/md/places/geohierarchies/list',
-            element: <ComingSoon key="md-places-geohierarchies" deliveryDate="2024-08-30T23:59:59" />
+            element: <GeoHierarchies />
         },
         {
-            path: '/md/places/stationcoverage/list',
-            element: <ComingSoon key="md-places-stationcoverage" deliveryDate="2024-08-30T23:59:59" />
+            path: '/md/places/geohierarchies/create',
+            element: <CreateGeoHierarchy />
         },
+        {
+            path: '/md/places/geohierarchies/edit/id/:id',
+            element: <EditGeoHierarchy />
+        },
+        {
+            path: '/md/places/geohierarchies/view/id/:id',
+            element: <ViewGeoHierarchy />
+        },        
+        {
+            path: '/md/places/stationcoverage/list',
+            element: <StationCoverages />
+        },
+        {
+            path: '/md/places/stationcoverage/create',
+            element: <CreateStationCoverage />
+        },
+        {
+            path: '/md/places/stationcoverage/edit/id/:id',
+            element: <EditStationCoverage />
+        },
+        {
+            path: '/md/places/stationcoverage/view/id/:id',
+            element: <ViewStationCoverage />
+        },        
         {
             path: '/md/contracts/loader/list',
             element: <ComingSoon key="md-contracts-loader" deliveryDate="2024-08-30T23:59:59" />
