@@ -20,6 +20,15 @@ const EditTenant = Loadable(lazy(() => import('features/tenants/containers/EditT
 
 const ViewTenant = Loadable(lazy(() => import('features/tenants/containers/ViewTenant')));
 
+const Companies = Loadable(lazy(() => import('features/companies/containers/Companies')));
+
+const CreateCompany = Loadable(lazy(() => import('features/companies/containers/CreateCompany')));
+
+const EditCompany = Loadable(lazy(() => import('features/companies/containers/EditCompany')));
+
+const ViewCompany = Loadable(lazy(() => import('features/companies/containers/ViewCompany')));
+
+
 // ==============================|| MAIN ROUTING ||============================== //
 
 const MainRoutes = {
@@ -124,8 +133,20 @@ const MainRoutes = {
         },
         {
             path: '/md/org/companies/list',
-            element: <ComingSoon key="md-org-companies" deliveryDate="2024-08-28T23:59:59" />
+            element: <Companies />
         },
+        {
+            path: '/md/org/companies/create',
+            element: <CreateCompany />
+        },
+        {
+            path: '/md/org/companies/edit/id/:id',
+            element: <EditCompany />
+        },
+        {
+            path: '/md/org/companies/view/id/:id',
+            element: <ViewCompany />
+        },        
         {
             path: '/md/org/users/privileges/list',
             element: <ComingSoon key="md-org-users-privileges" deliveryDate="2024-10-04T23:59:59" />
