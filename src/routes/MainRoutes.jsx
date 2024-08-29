@@ -8,25 +8,18 @@ import AuthGuard from 'utils/route-guard/AuthGuard';
 
 // dashboard routing
 const ExecSummary = Loadable(lazy(() => import('features/dashboard/execsummary/containers/ExecSummary')));
-
 const ComingSoon = Loadable(lazy(() => import('features/maintenance/containers/ComingSoon')));
 
-
 const Tenants = Loadable(lazy(() => import('features/tenants/containers/Tenants')));
-
 const CreateTenant = Loadable(lazy(() => import('features/tenants/containers/CreateTenant')));
-
 const EditTenant = Loadable(lazy(() => import('features/tenants/containers/EditTenant')));
-
 const ViewTenant = Loadable(lazy(() => import('features/tenants/containers/ViewTenant')));
 
 const Companies = Loadable(lazy(() => import('features/companies/containers/Companies')));
-
 const CreateCompany = Loadable(lazy(() => import('features/companies/containers/CreateCompany')));
-
 const EditCompany = Loadable(lazy(() => import('features/companies/containers/EditCompany')));
-
 const ViewCompany = Loadable(lazy(() => import('features/companies/containers/ViewCompany')));
+
 const Offices = Loadable(lazy(() => import('features/offices/containers/Offices')));
 const CreateOffice = Loadable(lazy(() => import('features/offices/containers/CreateOffice')));
 const EditOffice = Loadable(lazy(() => import('features/offices/containers/EditOffice')));
@@ -36,6 +29,11 @@ const Customers = Loadable(lazy(() => import('features/customers/containers/Cust
 const CreateCustomer = Loadable(lazy(() => import('features/customers/containers/CreateCustomer')));
 const EditCustomer = Loadable(lazy(() => import('features/customers/containers/EditCustomer')));
 const ViewCustomer = Loadable(lazy(() => import('features/customers/containers/ViewCustomer')));
+
+const ChannelPartners = Loadable(lazy(() => import('features/channelpartners/containers/ChannelPartners')));
+const CreateChannelPartner = Loadable(lazy(() => import('features/channelpartners/containers/CreateChannelPartner')));
+const EditChannelPartner = Loadable(lazy(() => import('features/channelpartners/containers/EditChannelPartner')));
+const ViewChannelPartner = Loadable(lazy(() => import('features/channelpartners/containers/ViewChannelPartner')));
 
 
 // ==============================|| MAIN ROUTING ||============================== //
@@ -202,8 +200,20 @@ const MainRoutes = {
         },        
         {
             path: '/md/ext/org/channelpartners/list',
-            element: <ComingSoon key="md-ext-org-channelpartners" deliveryDate="2024-08-28T23:59:59" />
+            element: <ChannelPartners />
         },
+        {
+            path: '/md/ext/org/channelpartners/create',
+            element: <CreateChannelPartner />
+        },
+        {
+            path: '/md/ext/org/channelpartners/edit/id/:id',
+            element: <EditChannelPartner />
+        },
+        {
+            path: '/md/ext/org/channelpartners/view/id/:id',
+            element: <ViewChannelPartner />
+        },        
         {
             path: '/md/ext/org/vendors/list',
             element: <ComingSoon key="md-ext-org-vendors" deliveryDate="2024-08-28T23:59:59" />
