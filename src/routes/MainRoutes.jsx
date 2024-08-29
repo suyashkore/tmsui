@@ -27,6 +27,11 @@ const CreateCompany = Loadable(lazy(() => import('features/companies/containers/
 const EditCompany = Loadable(lazy(() => import('features/companies/containers/EditCompany')));
 
 const ViewCompany = Loadable(lazy(() => import('features/companies/containers/ViewCompany')));
+const Offices = Loadable(lazy(() => import('features/offices/containers/Offices')));
+const CreateOffice = Loadable(lazy(() => import('features/offices/containers/CreateOffice')));
+const EditOffice = Loadable(lazy(() => import('features/offices/containers/EditOffice')));
+const ViewOffice = Loadable(lazy(() => import('features/offices/containers/ViewOffice')));
+
 
 
 // ==============================|| MAIN ROUTING ||============================== //
@@ -161,8 +166,20 @@ const MainRoutes = {
         },
         {
             path: '/md/org/offices/list',
-            element: <ComingSoon key="md-org-offices" deliveryDate="2024-08-28T23:59:59" />
+            element: <Offices />
         },
+        {
+            path: '/md/org/offices/create',
+            element: <CreateOffice />
+        },
+        {
+            path: '/md/org/offices/edit/id/:id',
+            element: <EditOffice />
+        },
+        {
+            path: '/md/org/offices/view/id/:id',
+            element: <ViewOffice />
+        },        
         {
             path: '/md/ext/org/customers/list',
             element: <ComingSoon key="md-ext-org-customers" deliveryDate="2024-08-28T23:59:59" />
