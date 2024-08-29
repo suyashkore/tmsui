@@ -40,6 +40,10 @@ const CreateVendor = Loadable(lazy(() => import('features/vendors/containers/Cre
 const EditVendor = Loadable(lazy(() => import('features/vendors/containers/EditVendor')));
 const ViewVendor = Loadable(lazy(() => import('features/vendors/containers/ViewVendor')));
 
+const Vehicles = Loadable(lazy(() => import('features/fleet/containers/Vehicles')));
+const CreateVehicle = Loadable(lazy(() => import('features/fleet/containers/CreateVehicle')));
+const EditVehicle = Loadable(lazy(() => import('features/fleet/containers/EditVehicle')));
+const ViewVehicle = Loadable(lazy(() => import('features/fleet/containers/ViewVehicle')));
 
 
 // ==============================|| MAIN ROUTING ||============================== //
@@ -238,8 +242,20 @@ const MainRoutes = {
         },        
         {
             path: '/md/fleet/vehicles/list',
-            element: <ComingSoon key="md-fleet-vehicles" deliveryDate="2024-08-29T23:59:59" />
+            element: <Vehicles />
         },
+        {
+            path: '/md/fleet/vehicles/create',
+            element: <CreateVehicle />
+        },
+        {
+            path: '/md/fleet/vehicles/edit/id/:id',
+            element: <EditVehicle />
+        },
+        {
+            path: '/md/fleet/vehicles/view/id/:id',
+            element: <ViewVehicle />
+        },        
         {
             path: '/md/places/geohierarchies/list',
             element: <ComingSoon key="md-places-geohierarchies" deliveryDate="2024-08-30T23:59:59" />
