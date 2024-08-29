@@ -35,6 +35,12 @@ const CreateChannelPartner = Loadable(lazy(() => import('features/channelpartner
 const EditChannelPartner = Loadable(lazy(() => import('features/channelpartners/containers/EditChannelPartner')));
 const ViewChannelPartner = Loadable(lazy(() => import('features/channelpartners/containers/ViewChannelPartner')));
 
+const Vendors = Loadable(lazy(() => import('features/vendors/containers/Vendors')));
+const CreateVendor = Loadable(lazy(() => import('features/vendors/containers/CreateVendor')));
+const EditVendor = Loadable(lazy(() => import('features/vendors/containers/EditVendor')));
+const ViewVendor = Loadable(lazy(() => import('features/vendors/containers/ViewVendor')));
+
+
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -216,8 +222,20 @@ const MainRoutes = {
         },        
         {
             path: '/md/ext/org/vendors/list',
-            element: <ComingSoon key="md-ext-org-vendors" deliveryDate="2024-08-28T23:59:59" />
+            element: <Vendors />
         },
+        {
+            path: '/md/ext/org/vendors/create',
+            element: <CreateVendor />
+        },
+        {
+            path: '/md/ext/org/vendors/edit/id/:id',
+            element: <EditVendor />
+        },
+        {
+            path: '/md/ext/org/vendors/view/id/:id',
+            element: <ViewVendor />
+        },        
         {
             path: '/md/fleet/vehicles/list',
             element: <ComingSoon key="md-fleet-vehicles" deliveryDate="2024-08-29T23:59:59" />
