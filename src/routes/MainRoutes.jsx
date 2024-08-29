@@ -60,6 +60,11 @@ const CreateLoaderRate = Loadable(lazy(() => import('features/contracts/containe
 const EditLoaderRate = Loadable(lazy(() => import('features/contracts/containers/EditLoaderRate')));
 const ViewLoaderRate = Loadable(lazy(() => import('features/contracts/containers/ViewLoaderRate')));
 
+const DriverRates = Loadable(lazy(() => import('features/contracts/containers/DriverRates')));
+const CreateDriverRate = Loadable(lazy(() => import('features/contracts/containers/CreateDriverRate')));
+const EditDriverRate = Loadable(lazy(() => import('features/contracts/containers/EditDriverRate')));
+const ViewDriverRate = Loadable(lazy(() => import('features/contracts/containers/ViewDriverRate')));
+
 // ==============================|| MAIN ROUTING ||============================== //
 
 const MainRoutes = {
@@ -320,8 +325,20 @@ const MainRoutes = {
         },        
         {
             path: '/md/contracts/driver/list',
-            element: <ComingSoon key="md-contracts-driver" deliveryDate="2024-08-30T23:59:59" />
+            element: <DriverRates />
         },
+        {
+            path: '/md/contracts/driver/create',
+            element: <CreateDriverRate />
+        },
+        {
+            path: '/md/contracts/driver/edit/id/:id',
+            element: <EditDriverRate />
+        },
+        {
+            path: '/md/contracts/driver/view/id/:id',
+            element: <ViewDriverRate />
+        },        
         {
             path: '/md/contracts/customer/list',
             element: <ComingSoon key="md-contracts-customer" deliveryDate="2024-09-06T23:59:59" />
