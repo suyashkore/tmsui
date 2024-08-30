@@ -70,6 +70,15 @@ const CreateUser = Loadable(lazy(() => import('features/users/containers/CreateU
 const EditUser = Loadable(lazy(() => import('features/users/containers/EditUser')));
 const ViewUser = Loadable(lazy(() => import('features/users/containers/ViewUser')));
 
+const Privileges = Loadable(lazy(() => import('features/users/containers/Privileges')));
+const CreatePrivilege = Loadable(lazy(() => import('features/users/containers/CreatePrivilege')));
+const EditPrivilege = Loadable(lazy(() => import('features/users/containers/EditPrivilege')));
+const ViewPrivilege = Loadable(lazy(() => import('features/users/containers/ViewPrivilege')));
+
+const Roles = Loadable(lazy(() => import('features/users/containers/Roles')));
+const CreateRole = Loadable(lazy(() => import('features/users/containers/CreateRole')));
+const EditRole = Loadable(lazy(() => import('features/users/containers/EditRole')));
+const ViewRole = Loadable(lazy(() => import('features/users/containers/ViewRole')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -191,11 +200,35 @@ const MainRoutes = {
         },        
         {
             path: '/md/access/privileges/list',
-            element: <ComingSoon key="md-org-users-privileges" deliveryDate="2024-10-04T23:59:59" />
+            element: <Privileges />
         },
         {
+            path: '/md/access/privileges/create',
+            element: <CreatePrivilege />
+        },
+        {
+            path: '/md/access/privileges/edit/id/:id',
+            element: <EditPrivilege />
+        },
+        {
+            path: '/md/access/privileges/view/id/:id',
+            element: <ViewPrivilege />
+        },        
+        {
             path: '/md/access/roles/list',
-            element: <ComingSoon key="md-org-users-roles" deliveryDate="2024-10-04T23:59:59" />
+            element: <Roles />
+        },
+        {
+            path: '/md/access/roles/create',
+            element: <CreateRole />
+        },
+        {
+            path: '/md/access/roles/edit/id/:id',
+            element: <EditRole />
+        },
+        {
+            path: '/md/access/roles/view/id/:id',
+            element: <ViewRole />
         },
         {
             path: '/md/access/users/list',
