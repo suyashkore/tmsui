@@ -4,6 +4,7 @@ import { FormattedMessage } from 'react-intl';
 // assets
 import {
     IconDatabaseCog,
+    IconUsers,
     IconHierarchy3,
     IconBuildings,
     IconTruckDelivery,
@@ -14,6 +15,7 @@ import {
 // constant
 const icons = {
     IconDatabaseCog,
+    IconUsers,
     IconHierarchy3,
     IconBuildings,
     IconTruckDelivery,
@@ -30,27 +32,11 @@ const masterdata = {
     type: 'group',
     children: [
         {
-            id: 'organisation',
-            title: <FormattedMessage id="organisation" />,
+            id: 'usersaccess',
+            title: <FormattedMessage id="usersaccess" />,
             type: 'collapse',
-            icon: icons.IconHierarchy3,
+            icon: icons.IconUsers,
             children: [
-                {
-                    id: 'tenants',
-                    title: <FormattedMessage id="tenants" />,
-                    type: 'item',
-                    link: '/md/org/tenants/:view',
-                    url: '/md/org/tenants/list',
-                    breadcrumbs: true
-                },
-                {
-                    id: 'companies',
-                    title: <FormattedMessage id="companies" />,
-                    type: 'item',
-                    link: '/md/org/companies/:view',
-                    url: '/md/org/companies/list',
-                    breadcrumbs: true
-                },   
                 {
                     id: 'privileges',
                     title: <FormattedMessage id="privileges" />,
@@ -74,7 +60,31 @@ const masterdata = {
                     link: '/md/org/users/:view',
                     url: '/md/org/users/list',
                     breadcrumbs: true
+                } 
+            ]
+        },
+        {
+            id: 'organisation',
+            title: <FormattedMessage id="organisation" />,
+            type: 'collapse',
+            icon: icons.IconHierarchy3,
+            children: [
+                {
+                    id: 'tenants',
+                    title: <FormattedMessage id="tenants" />,
+                    type: 'item',
+                    link: '/md/org/tenants/:view',
+                    url: '/md/org/tenants/list',
+                    breadcrumbs: true
                 },
+                {
+                    id: 'companies',
+                    title: <FormattedMessage id="companies" />,
+                    type: 'item',
+                    link: '/md/org/companies/:view',
+                    url: '/md/org/companies/list',
+                    breadcrumbs: true
+                },   
                 {
                     id: 'offices',
                     title: <FormattedMessage id="offices" />,
