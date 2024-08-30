@@ -1,59 +1,132 @@
-import axios from 'axios';
+// tmsui/src/features/users/api/PrivilegeApi.js
+
+import backendApiCall from 'utils/backendApiCall';
+import { Privilege } from '../models/PrivilegeModel';
+import ApiErrorResponse from 'features/common/models/ApiErrorResponse';
+import ImportApiResponse from 'features/common/models/ImportApiResponse';
+import ImportApiErrorResponse from 'features/common/models/ImportApiErrorResponse';
 
 /**
- * Privilege API
- * Provides methods to interact with the privilege-related backend APIs.
+ * Privilege API - Handles all the backend API calls for privilege-related actions.
  */
 const PrivilegeApi = {
-    /**
-     * Fetch a list of privileges with optional filters, sorting, and pagination.
-     * @param {Object} params - Query parameters for filtering, sorting, and pagination.
-     * @returns {Promise<Object>} - The API response with data and total count.
-     */
-    async fetchPrivileges(params = {}) {
-        const response = await axios.get('/users/privileges', { params });
-        return response.data;
+    async getPrivileges(params = {}) {
+        try {
+            const response = await backendApiCall.get('/users/privileges', { params });
+            const privileges = response.data.data.map((privilege) => Privilege.fromApiResponse(privilege));
+            return { data: privileges, total: response.data.total };
+        } catch (error) {
+            throw ApiErrorResponse.fromApiResponse(error);
+        }
     },
 
-    /**
-     * Fetch a privilege by its ID.
-     * @param {number} id - The ID of the privilege to fetch.
-     * @returns {Promise<Object>} - The privilege data.
-     */
-    async fetchPrivilegeById(id) {
-        const response = await axios.get(`/users/privileges/${id}`);
-        return response.data;
+    async getPrivilegeById(id) {
+        try {
+            const response = await backendApiCall.get(`/users/privileges/id/${id}`);
+            return Privilege.fromApiResponse(response.data);
+        } catch (error) {
+            throw ApiErrorResponse.fromApiResponse(error);
+        }
     },
 
-    /**
-     * Create a new privilege.
-     * @param {Object} privilegeData - The data for the new privilege.
-     * @returns {Promise<Object>} - The created privilege data.
-     */
-    async createPrivilege(privilegeData) {
-        const response = await axios.post('/users/privileges', privilegeData);
-        return response.data;
+    async createPrivilege(data) {
+        try {
+            const response = await backendApiCall.post('/users/privileges', data);
+            return Privilege.fromApiResponse(response.data);
+        } catch (error) {
+            throw ApiErrorResponse.fromApiResponse(error);
+        }
     },
 
-    /**
-     * Update an existing privilege by its ID.
-     * @param {number} id - The ID of the privilege to update.
-     * @param {Object} privilegeData - The updated data for the privilege.
-     * @returns {Promise<Object>} - The updated privilege data.
-     */
-    async updatePrivilege(id, privilegeData) {
-        const response = await axios.put(`/users/privileges/${id}`, privilegeData);
-        return response.data;
+    async updatePrivilege(id, data) {
+        try {
+            const response = await backendApiCall.put(`/users/privileges/${id}`, data);
+            return Privilege.fromApiResponse(response.data);
+        } catch (error) {
+            throw ApiErrorResponse.fromApiResponse(error);
+        }
     },
 
-    /**
-     * Delete a privilege by its ID.
-     * @param {number} id - The ID of the privilege to delete.
-     * @returns {Promise<void>} - The API response indicating success.
-     */
+    async deactivatePrivilege(id) {
+        try {
+            const response = await backendApiCall.patch(`/users/privileges/${id}/deactivate`);
+            return response.data;
+        } catch (error) {
+            throw ApiErrorResponse.fromApiResponse(error);
+        }
+    },
+
     async deletePrivilege(id) {
-        await axios.delete(`/users/privileges/${id}`);
+        try {
+            const response = await backendApiCall.delete(`/users/privileges/${id}`);
+            return response.data;
+        } catch (error) {
+            throw ApiErrorResponse.fromApiResponse(error);
+        }
+    },
+
+    async downloadPrivilegeTemplate() {
+        try {
+            const response = await backendApiCall.get('/users/privileges/xlsxtemplate', {
+                responseType: 'blob'
+            });
+
+            const contentDisposition = response.headers['content-disposition'] || response.headers['Content-Disposition'] || response.headers['CONTENT-DISPOSITION'];
+            const filename = contentDisposition
+                ? contentDisposition.split('filename=')[1]?.replace(/['"]/g, '')
+                : 'privilege_template.xlsx';
+
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', filename);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        } catch (error) {
+            throw ApiErrorResponse.fromApiResponse(error);
+        }
+    },
+
+    async exportPrivileges(params = {}) {
+        try {
+            const response = await backendApiCall.get('/users/privileges/export/xlsx', {
+                params,
+                responseType: 'blob'
+            });
+
+            const contentDisposition = response.headers['content-disposition'] || response.headers['Content-Disposition'] || response.headers['CONTENT-DISPOSITION'];
+            const filename = contentDisposition
+                ? contentDisposition.split('filename=')[1]?.replace(/['"]/g, '')
+                : 'privilege_export.xlsx';
+
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', filename);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        } catch (error) {
+            throw ApiErrorResponse.fromApiResponse(error);
+        }
+    },
+
+    async importPrivileges(file) {
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+            const response = await backendApiCall.post('/users/privileges/import/xlsx', formData);
+            return ImportApiResponse.fromApiResponse(response.data);
+        } catch (error) {
+            if (error.data) {
+                throw ImportApiErrorResponse.fromApiResponse(error);
+            } else {
+                throw ApiErrorResponse.fromApiResponse(error);
+            }            
+        }
     }
+
 };
 
 export default PrivilegeApi;

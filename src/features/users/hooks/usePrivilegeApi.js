@@ -1,84 +1,94 @@
+// tmsui/src/features/users/hooks/usePrivilegeApi.js
+
 import { useCallback } from 'react';
 import PrivilegeApi from '../api/PrivilegeApi';
+import { Privilege } from '../models/PrivilegeModel';
+import ImportApiResponse from 'features/common/models/ImportApiResponse';
+import ApiErrorResponse from 'features/common/models/ApiErrorResponse';
+import ImportApiErrorResponse from 'features/common/models/ImportApiErrorResponse';
 
 /**
- * Custom hook to interact with the Privilege API.
- * Provides methods for fetching, creating, updating, and deleting privileges.
+ * Custom hook for interacting with the Privilege API.
+ * Provides functions for common operations such as fetching, creating, updating, and deleting privileges.
  */
 const usePrivilegeApi = () => {
-
-    /**
-     * Fetch a list of privileges with optional filters, sorting, and pagination.
-     * @param {Object} params - Query parameters for filtering, sorting, and pagination.
-     * @returns {Promise<Object>} - The API response with data and total count.
-     */
-    const fetchPrivileges = useCallback(async (params) => {
+    const fetchPrivileges = useCallback(async (params = {}) => {
         try {
-            const response = await PrivilegeApi.fetchPrivileges(params);
+            const response = await PrivilegeApi.getPrivileges(params);
             return response;
         } catch (error) {
-            console.error('Failed to fetch privileges:', error);
-            throw error;
+            throw error instanceof ApiErrorResponse ? error : ApiErrorResponse.fromApiResponse(error);
         }
     }, []);
 
-    /**
-     * Fetch a privilege by its ID.
-     * @param {number} id - The ID of the privilege to fetch.
-     * @returns {Promise<Object>} - The privilege data.
-     */
     const fetchPrivilegeById = useCallback(async (id) => {
         try {
-            const response = await PrivilegeApi.fetchPrivilegeById(id);
-            return response;
+            const privilege = await PrivilegeApi.getPrivilegeById(id);
+            return privilege;
         } catch (error) {
-            console.error(`Failed to fetch privilege with ID ${id}:`, error);
-            throw error;
+            throw error instanceof ApiErrorResponse ? error : ApiErrorResponse.fromApiResponse(error);
         }
     }, []);
 
-    /**
-     * Create a new privilege.
-     * @param {Object} privilegeData - The data for the new privilege.
-     * @returns {Promise<Object>} - The created privilege data.
-     */
-    const createPrivilege = useCallback(async (privilegeData) => {
+    const createPrivilege = useCallback(async (data) => {
         try {
-            const response = await PrivilegeApi.createPrivilege(privilegeData);
-            return response;
+            const newPrivilege = await PrivilegeApi.createPrivilege(data);
+            return newPrivilege;
         } catch (error) {
-            console.error('Failed to create privilege:', error);
-            throw error;
+            throw error instanceof ApiErrorResponse ? error : ApiErrorResponse.fromApiResponse(error);
         }
     }, []);
 
-    /**
-     * Update an existing privilege by its ID.
-     * @param {number} id - The ID of the privilege to update.
-     * @param {Object} privilegeData - The updated data for the privilege.
-     * @returns {Promise<Object>} - The updated privilege data.
-     */
-    const updatePrivilege = useCallback(async (id, privilegeData) => {
+    const updatePrivilege = useCallback(async (id, data) => {
         try {
-            const response = await PrivilegeApi.updatePrivilege(id, privilegeData);
-            return response;
+            const updatedPrivilege = await PrivilegeApi.updatePrivilege(id, data);
+            return updatedPrivilege;
         } catch (error) {
-            console.error(`Failed to update privilege with ID ${id}:`, error);
-            throw error;
+            throw error instanceof ApiErrorResponse ? error : ApiErrorResponse.fromApiResponse(error);
         }
     }, []);
 
-    /**
-     * Delete a privilege by its ID.
-     * @param {number} id - The ID of the privilege to delete.
-     * @returns {Promise<void>} - The API response indicating success.
-     */
+    const deactivatePrivilege = useCallback(async (id) => {
+        try {
+            await PrivilegeApi.deactivatePrivilege(id);
+        } catch (error) {
+            throw error instanceof ApiErrorResponse ? error : ApiErrorResponse.fromApiResponse(error);
+        }
+    }, []);
+
     const deletePrivilege = useCallback(async (id) => {
         try {
             await PrivilegeApi.deletePrivilege(id);
         } catch (error) {
-            console.error(`Failed to delete privilege with ID ${id}:`, error);
-            throw error;
+            throw error instanceof ApiErrorResponse ? error : ApiErrorResponse.fromApiResponse(error);
+        }
+    }, []);
+
+    const downloadPrivilegeTemplate = useCallback(async () => {
+        try {
+            await PrivilegeApi.downloadPrivilegeTemplate();
+        } catch (error) {
+            throw error instanceof ApiErrorResponse ? error : ApiErrorResponse.fromApiResponse(error);
+        }
+    }, []);
+
+    const exportPrivileges = useCallback(async (params = {}) => {
+        try {
+            await PrivilegeApi.exportPrivileges(params);
+        } catch (error) {
+            throw error instanceof ApiErrorResponse ? error : ApiErrorResponse.fromApiResponse(error);
+        }
+    }, []);
+
+    const importPrivileges = useCallback(async (file) => {
+        try {
+            const response = await PrivilegeApi.importPrivileges(file);
+            return response;
+        } catch (error) {
+            if (error instanceof ImportApiErrorResponse) {
+                throw error;
+            }
+            throw error instanceof ApiErrorResponse ? error : ApiErrorResponse.fromApiResponse(error);
         }
     }, []);
 
@@ -87,7 +97,11 @@ const usePrivilegeApi = () => {
         fetchPrivilegeById,
         createPrivilege,
         updatePrivilege,
+        deactivatePrivilege,
         deletePrivilege,
+        downloadPrivilegeTemplate,
+        exportPrivileges,
+        importPrivileges,
     };
 };
 

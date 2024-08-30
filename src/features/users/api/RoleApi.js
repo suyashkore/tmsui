@@ -1,143 +1,132 @@
 // tmsui/src/features/users/api/RoleApi.js
 
-import axios from 'axios';
+import backendApiCall from 'utils/backendApiCall';
+import { Role } from '../models/RoleModel';
+import ApiErrorResponse from 'features/common/models/ApiErrorResponse';
+import ImportApiResponse from 'features/common/models/ImportApiResponse';
+import ImportApiErrorResponse from 'features/common/models/ImportApiErrorResponse';
 
 /**
- * Role API
- * Handles API calls related to roles in the application.
+ * Role API - Handles all the backend API calls for role-related actions.
  */
 const RoleApi = {
-    /**
-     * Fetch a list of roles with optional filters, sorting, and pagination.
-     * @param {Object} params - Query parameters for fetching roles.
-     * @returns {Promise<Object>} - The response containing the list of roles and total count.
-     */
-    fetchRoles: async (params) => {
+    async getRoles(params = {}) {
         try {
-            const response = await axios.get('/users/roles', { params });
-            return {
-                data: response.data.data,
-                total: response.data.total,
-            };
+            const response = await backendApiCall.get('/users/roles', { params });
+            const roles = response.data.data.map((role) => Role.fromApiResponse(role));
+            return { data: roles, total: response.data.total };
         } catch (error) {
-            throw new Error(error.response?.data?.message || 'Failed to fetch roles');
+            throw ApiErrorResponse.fromApiResponse(error);
         }
     },
 
-    /**
-     * Fetch a specific role by its ID.
-     * @param {number|string} id - The ID of the role to fetch.
-     * @returns {Promise<Object>} - The role data.
-     */
-    fetchRoleById: async (id) => {
+    async getRoleById(id) {
         try {
-            const response = await axios.get(`/users/roles/${id}`);
+            const response = await backendApiCall.get(`/users/roles/id/${id}`);
+            return Role.fromApiResponse(response.data);
+        } catch (error) {
+            throw ApiErrorResponse.fromApiResponse(error);
+        }
+    },
+
+    async createRole(data) {
+        try {
+            const response = await backendApiCall.post('/users/roles', data);
+            return Role.fromApiResponse(response.data);
+        } catch (error) {
+            throw ApiErrorResponse.fromApiResponse(error);
+        }
+    },
+
+    async updateRole(id, data) {
+        try {
+            const response = await backendApiCall.put(`/users/roles/${id}`, data);
+            return Role.fromApiResponse(response.data);
+        } catch (error) {
+            throw ApiErrorResponse.fromApiResponse(error);
+        }
+    },
+
+    async deactivateRole(id) {
+        try {
+            const response = await backendApiCall.patch(`/users/roles/${id}/deactivate`);
             return response.data;
         } catch (error) {
-            throw new Error(error.response?.data?.message || 'Failed to fetch role');
+            throw ApiErrorResponse.fromApiResponse(error);
         }
     },
 
-    /**
-     * Create a new role.
-     * @param {Object} roleData - The data for the new role.
-     * @returns {Promise<Object>} - The created role data.
-     */
-    createRole: async (roleData) => {
+    async deleteRole(id) {
         try {
-            const response = await axios.post('/users/roles', roleData);
+            const response = await backendApiCall.delete(`/users/roles/${id}`);
             return response.data;
         } catch (error) {
-            throw new Error(error.response?.data?.message || 'Failed to create role');
+            throw ApiErrorResponse.fromApiResponse(error);
         }
     },
 
-    /**
-     * Update an existing role by its ID.
-     * @param {number|string} id - The ID of the role to update.
-     * @param {Object} roleData - The updated role data.
-     * @returns {Promise<Object>} - The updated role data.
-     */
-    updateRole: async (id, roleData) => {
+    async downloadRoleTemplate() {
         try {
-            const response = await axios.put(`/users/roles/${id}`, roleData);
-            return response.data;
-        } catch (error) {
-            throw new Error(error.response?.data?.message || 'Failed to update role');
-        }
-    },
-
-    /**
-     * Delete a role by its ID.
-     * @param {number|string} id - The ID of the role to delete.
-     * @returns {Promise<void>}
-     */
-    deleteRole: async (id) => {
-        try {
-            await axios.delete(`/users/roles/${id}`);
-        } catch (error) {
-            throw new Error(error.response?.data?.message || 'Failed to delete role');
-        }
-    },
-
-    /**
-     * Deactivate a role by its ID.
-     * @param {number|string} id - The ID of the role to deactivate.
-     * @returns {Promise<void>}
-     */
-    deactivateRole: async (id) => {
-        try {
-            await axios.post(`/users/roles/${id}/deactivate`);
-        } catch (error) {
-            throw new Error(error.response?.data?.message || 'Failed to deactivate role');
-        }
-    },
-
-    /**
-     * Download a template for importing roles.
-     * @returns {Promise<Blob>} - The file blob of the template.
-     */
-    downloadRoleTemplate: async () => {
-        try {
-            const response = await axios.get('/users/roles/template', { responseType: 'blob' });
-            return response.data;
-        } catch (error) {
-            throw new Error(error.response?.data?.message || 'Failed to download role template');
-        }
-    },
-
-    /**
-     * Import roles from an Excel file.
-     * @param {FormData} formData - The form data containing the file to import.
-     * @returns {Promise<Object>} - The import results.
-     */
-    importRoles: async (formData) => {
-        try {
-            const response = await axios.post('/users/roles/import', formData, {
-                headers: { 'Content-Type': 'multipart/form-data' },
+            const response = await backendApiCall.get('/users/roles/xlsxtemplate', {
+                responseType: 'blob'
             });
-            return response.data;
+
+            const contentDisposition = response.headers['content-disposition'] || response.headers['Content-Disposition'] || response.headers['CONTENT-DISPOSITION'];
+            const filename = contentDisposition
+                ? contentDisposition.split('filename=')[1]?.replace(/['"]/g, '')
+                : 'role_template.xlsx';
+
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', filename);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         } catch (error) {
-            throw new Error(error.response?.data?.message || 'Failed to import roles');
+            throw ApiErrorResponse.fromApiResponse(error);
         }
     },
 
-    /**
-     * Export roles to an Excel file based on the current filters and sorting.
-     * @param {Object} params - Query parameters for exporting roles.
-     * @returns {Promise<Blob>} - The file blob of the exported roles.
-     */
-    exportRoles: async (params) => {
+    async exportRoles(params = {}) {
         try {
-            const response = await axios.get('/users/roles/export', {
+            const response = await backendApiCall.get('/users/roles/export/xlsx', {
                 params,
-                responseType: 'blob',
+                responseType: 'blob'
             });
-            return response.data;
+
+            const contentDisposition = response.headers['content-disposition'] || response.headers['Content-Disposition'] || response.headers['CONTENT-DISPOSITION'];
+            const filename = contentDisposition
+                ? contentDisposition.split('filename=')[1]?.replace(/['"]/g, '')
+                : 'role_export.xlsx';
+
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', filename);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         } catch (error) {
-            throw new Error(error.response?.data?.message || 'Failed to export roles');
+            throw ApiErrorResponse.fromApiResponse(error);
         }
     },
+
+    async importRoles(file) {
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+            const response = await backendApiCall.post('/users/roles/import/xlsx', formData);
+            return ImportApiResponse.fromApiResponse(response.data);
+        } catch (error) {
+            if (error.data) {
+                throw ImportApiErrorResponse.fromApiResponse(error);
+            } else {
+                throw ApiErrorResponse.fromApiResponse(error);
+            }            
+        }
+    }
+
 };
 
 export default RoleApi;
