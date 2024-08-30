@@ -65,6 +65,12 @@ const CreateDriverRate = Loadable(lazy(() => import('features/contracts/containe
 const EditDriverRate = Loadable(lazy(() => import('features/contracts/containers/EditDriverRate')));
 const ViewDriverRate = Loadable(lazy(() => import('features/contracts/containers/ViewDriverRate')));
 
+const Users = Loadable(lazy(() => import('features/users/containers/Users')));
+const CreateUser = Loadable(lazy(() => import('features/users/containers/CreateUser')));
+const EditUser = Loadable(lazy(() => import('features/users/containers/EditUser')));
+const ViewUser = Loadable(lazy(() => import('features/users/containers/ViewUser')));
+
+
 // ==============================|| MAIN ROUTING ||============================== //
 
 const MainRoutes = {
@@ -184,17 +190,29 @@ const MainRoutes = {
             element: <ViewCompany />
         },        
         {
-            path: '/md/org/users/privileges/list',
+            path: '/md/access/privileges/list',
             element: <ComingSoon key="md-org-users-privileges" deliveryDate="2024-10-04T23:59:59" />
         },
         {
-            path: '/md/org/users/roles/list',
+            path: '/md/access/roles/list',
             element: <ComingSoon key="md-org-users-roles" deliveryDate="2024-10-04T23:59:59" />
         },
         {
-            path: '/md/org/users/list',
-            element: <ComingSoon key="md-org-users" deliveryDate="2024-10-04T23:59:59" />
+            path: '/md/access/users/list',
+            element: <Users />
         },
+        {
+            path: '/md/access/users/create',
+            element: <CreateUser />
+        },
+        {
+            path: '/md/access/users/edit/id/:id',
+            element: <EditUser />
+        },
+        {
+            path: '/md/access/users/view/id/:id',
+            element: <ViewUser />
+        },        
         {
             path: '/md/org/offices/list',
             element: <Offices />

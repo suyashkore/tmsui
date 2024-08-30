@@ -41,24 +41,24 @@ const masterdata = {
                     id: 'privileges',
                     title: <FormattedMessage id="privileges" />,
                     type: 'item',
-                    link: '/md/org/users/privileges/:view',
-                    url: '/md/org/users/privileges/list',
+                    link: '/md/access/privileges/:view',
+                    url: '/md/access/privileges/list',
                     breadcrumbs: true
                 },
                 {
                     id: 'roles',
                     title: <FormattedMessage id="roles" />,
                     type: 'item',
-                    link: '/md/org/users/roles/:view',
-                    url: '/md/org/users/roles/list',
+                    link: '/md/access/roles/:view',
+                    url: '/md/access/roles/list',
                     breadcrumbs: true
                 }, 
                 {
                     id: 'users',
                     title: <FormattedMessage id="users" />,
                     type: 'item',
-                    link: '/md/org/users/:view',
-                    url: '/md/org/users/list',
+                    link: '/md/access/users/:view',
+                    url: '/md/access/users/list',
                     breadcrumbs: true
                 } 
             ]
