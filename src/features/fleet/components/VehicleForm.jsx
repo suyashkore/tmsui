@@ -28,6 +28,7 @@ const VehicleForm = ({ vehicleData, setVehicleData, handleNext, handleSubmit, is
         rc_num: Yup.string().required('RC Number is required'),
         vehicle_ownership: Yup.string().required('Vehicle Ownership is required'),
         make: Yup.string().required('Make is required'),
+        base_office_id: Yup.number().required('Base Office ID is required'),
         pincode: Yup.string()
             .required('Pincode is required')
             .matches(/^\d{6}$/, 'Pincode must be 6 digits'),
@@ -59,6 +60,7 @@ const VehicleForm = ({ vehicleData, setVehicleData, handleNext, handleSubmit, is
                 rc_num: true,
                 vehicle_ownership: true,
                 make: true,
+                base_office_id: true,
                 pincode: true,
                 address: true,
             });
@@ -104,6 +106,19 @@ const VehicleForm = ({ vehicleData, setVehicleData, handleNext, handleSubmit, is
                         onChange={formik.handleChange}
                         error={formik.touched.make && Boolean(formik.errors.make)}
                         helperText={formik.touched.make && formik.errors.make}
+                    />
+                </Grid>
+
+                {/* Base Office ID Field */}
+                <Grid item xs={12} sm={6} md={3}>
+                    <TextField
+                        fullWidth
+                        name="base_office_id"
+                        label="Base Office ID"
+                        value={formik.values.base_office_id || ''}
+                        onChange={formik.handleChange}
+                        error={formik.touched.base_office_id && Boolean(formik.errors.base_office_id)}
+                        helperText={formik.touched.base_office_id && formik.errors.base_office_id}
                     />
                 </Grid>
 
@@ -198,7 +213,7 @@ const VehicleForm = ({ vehicleData, setVehicleData, handleNext, handleSubmit, is
                                 fullWidth
                                 name="updated_at"
                                 label="Updated At"
-                                value={formik.values.created_at ? format(new Date(formik.values.updated_at), 'dd MMM yyyy, hh:mm a') : ''}
+                                value={formik.values.updated_at ? format(new Date(formik.values.updated_at), 'dd MMM yyyy, hh:mm a') : ''}
                                 InputProps={{ readOnly: true }}
                                 disabled
                             />
